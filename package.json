@@ -1,0 +1,61 @@
+{
+  "name": "health-bridge",
+  "version": "1.0.0",
+  "description": "The goal is to build a Node.js backend designed to run on a local \"edge\" device (like a Raspberry Pi or an old laptop in a rural clinic) that talks to a central \"Federal\" cloud server whenever it finds a signal.",
+  "main": "index.js",
+  "scripts": {
+    "test:unit": "node --experimental-vm-modules node_modules/jest/bin/jest.js --testPathPatterns=src/modules/ --detectOpenHandles --watch --verbose",
+    "test:e2e": "node --experimental-vm-modules node_modules/jest/bin/jest.js --detectOpenHandles  --testPathPatterns=src/e2e/app.test.ts --watch --verbose",
+    "build": "./clean_dist_dir.sh &&  tsc",
+    "start": "node ./dist/src/server.js",
+    "postinstall": "prisma generate",
+    "migrate": "prisma migrate deploy",
+    "predev": "npm run build",
+    "dev": "tsc -w & nodemon ./dist/src/server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Okibe00/health-bridge.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "module",
+  "bugs": {
+    "url": "https://github.com/Okibe00/health-bridge/issues"
+  },
+  "homepage": "https://github.com/Okibe00/health-bridge#readme",
+  "devDependencies": {
+    "@prisma/client": "^7.5.0",
+    "@types/bcrypt": "^6.0.0",
+    "@types/better-sqlite3": "^7.6.13",
+    "@types/express": "^5.0.6",
+    "@types/jest": "^30.0.0",
+    "@types/jsonwebtoken": "^9.0.10",
+    "@types/node": "^25.5.0",
+    "@types/socket.io": "^3.0.1",
+    "@types/supertest": "^7.2.0",
+    "@types/swagger-jsdoc": "^6.0.4",
+    "@types/swagger-ui-express": "^4.1.8",
+    "install": "^0.13.0",
+    "jest": "^30.3.0",
+    "jest-mock-extended": "^4.0.0",
+    "nodemon": "^3.1.14",
+    "npm": "^11.12.0",
+    "prisma": "^7.5.0",
+    "supertest": "^7.2.2",
+    "ts-jest": "^29.4.6",
+    "ts-node": "^10.9.2",
+    "tsx": "^4.21.0",
+    "typescript": "^5.9.3"
+  },
+  "dependencies": {
+    "@prisma/adapter-better-sqlite3": "^7.5.0",
+    "better-sqlite3": "^12.8.0",
+    "dotenv": "^17.3.1",
+    "express": "^5.2.1",
+    "path-to-regexp": "^8.4.1",
+    "uuid": "^13.0.0",
+    "zod": "^4.3.6"
+  }
+}
