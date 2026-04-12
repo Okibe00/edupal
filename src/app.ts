@@ -11,25 +11,22 @@ const app = express();
 app.use(express.json());
 
 /**
- * APP ROUTES 
+ * APP ROUTES
  */
 app.get('/api/v1', async (req: Request, res: Response, next: NextFunction) => {
   return res.status(200).json({
-    message: 'Welcome to HealthBridge',
+    message: 'Welcome to Edupal',
   });
 });
 
-app.use('/api/v1/patient', patientRoute)
-
 /**
  * CATCH ALL ROUTES
-*/
+ */
 app.use((req: Request, res: Response, next: NextFunction) => {
   return res.status(404).json({
     message: 'Not Found',
   });
 });
-
 
 /**
  * GLOBAL ERROR HANDLER
