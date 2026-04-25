@@ -31,8 +31,8 @@ export * from "./enums.js"
  * const prisma = new PrismaClient({
  *   adapter: new PrismaPg({ connectionString: process.env.DATABASE_URL })
  * })
- * // Fetch zero or more Users
- * const users = await prisma.user.findMany()
+ * // Fetch zero or more RefreshTokens
+ * const refreshTokens = await prisma.refreshToken.findMany()
  * ```
  * 
  * Read more in our [docs](https://pris.ly/d/client).
@@ -42,7 +42,102 @@ export type PrismaClient<LogOpts extends Prisma.LogLevel = never, OmitOpts exten
 export { Prisma }
 
 /**
+ * Model RefreshToken
+ * 
+ */
+export type RefreshToken = Prisma.RefreshTokenModel
+/**
  * Model User
  * 
  */
 export type User = Prisma.UserModel
+/**
+ * Model Role
+ * 
+ */
+export type Role = Prisma.RoleModel
+/**
+ * Model Permission
+ * 
+ */
+export type Permission = Prisma.PermissionModel
+/**
+ * Model RolePermission
+ * 
+ */
+export type RolePermission = Prisma.RolePermissionModel
+/**
+ * Model AdminProfile
+ * 
+ */
+export type AdminProfile = Prisma.AdminProfileModel
+/**
+ * Model TeacherProfile
+ * 
+ */
+export type TeacherProfile = Prisma.TeacherProfileModel
+/**
+ * Model StudentProfile
+ * 
+ */
+export type StudentProfile = Prisma.StudentProfileModel
+/**
+ * Model ParentProfile
+ * 
+ */
+export type ParentProfile = Prisma.ParentProfileModel
+/**
+ * Model ParentStudentLink
+ * 
+ */
+export type ParentStudentLink = Prisma.ParentStudentLinkModel
+/**
+ * Model School
+ * 
+ */
+export type School = Prisma.SchoolModel
+/**
+ * Model Class
+ * 
+ */
+export type Class = Prisma.ClassModel
+/**
+ * Model Subject
+ * 
+ */
+export type Subject = Prisma.SubjectModel
+/**
+ * Model TeachingAssignment
+ * 
+ */
+export type TeachingAssignment = Prisma.TeachingAssignmentModel
+/**
+ * Model LessonGuide
+ * 
+ */
+export type LessonGuide = Prisma.LessonGuideModel
+/**
+ * Model LessonEngagement
+ * 
+ */
+export type LessonEngagement = Prisma.LessonEngagementModel
+/**
+ * Model LessonSectionEngagement
+ * 
+ */
+export type LessonSectionEngagement = Prisma.LessonSectionEngagementModel
+/**
+ * Model ParentFeedback
+ * 
+ */
+export type ParentFeedback = Prisma.ParentFeedbackModel
+/**
+ * Model Notification
+ * 
+ */
+export type Notification = Prisma.NotificationModel
+/**
+ * Model StreakHistory
+ * 
+ */
+export type StreakHistory = Prisma.StreakHistoryModel

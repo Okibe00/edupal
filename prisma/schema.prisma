@@ -12,8 +12,341 @@ datasource db {
   provider = "postgres"
 }
 
-//patients models go  here
+//USER TOKENS
+// The model to track active sessions via Refresh Tokens
+model RefreshToken {
+  id         String   @id @default(uuid())
+  token      String   @unique
+  userId     String   @unique
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  expiresAt  DateTime
+  revoked    Boolean  @default(false)
+  deviceInfo String? // e.g., "iPhone 14 Pro" or "Pixel 7" 
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@index([userId])
+}
+
+// ================= USER & PROFILES ================
 model User {
+  id             String          @id @default(uuid())
+  name           String
+  email          String          @unique
+  password       String
+  roleId         String?
+  role           Role?           @relation(fields: [roleId], references: [id])
+  isVerified     Boolean         @default(false)
+  adminProfile   AdminProfile?
+  teacherProfile TeacherProfile?
+  studentProfile StudentProfile?
+  parentProfile  ParentProfile?
+  refreshToken   RefreshToken?
+  createdAt      DateTime        @default(now())
+  updateAt       DateTime        @updatedAt
+
+  @@index([name])
+}
+
+// ================= ROLES & PERMISSIONS =================
+
+model Role {
+  id   String   @id @default(uuid())
+  name UserRole @unique // e.g., "SUPER_ADMIN", "TEACHER"
+
+  users           User[]
+  rolePermissions RolePermission[]
+}
+
+model Permission {
+  id   String         @id @default(uuid())
+  name PermissionEnum @unique // e.g., "CREATE_CLASS", "DELETE_USER"
+
+  rolePermissions RolePermission[]
+}
+
+model RolePermission {
+  id String @id @default(uuid())
+
+  roleId String
+  role   Role   @relation(fields: [roleId], references: [id], onDelete: Cascade)
+
+  permissionId String
+  permission   Permission @relation(fields: [permissionId], references: [id], onDelete: Cascade)
+
+  @@unique([roleId, permissionId]) // Prevents assigning the exact same permission to a role twice
+}
+
+model AdminProfile {
+  id     String  @id @default(uuid())
+  street String?
+  city   String?
+  state  String?
+  tel    String?
+
+  userId String @unique
+  user   User   @relation(fields: [userId], references: [id])
+
+  schoolId String
+  school   School @relation(fields: [schoolId], references: [id])
+}
+
+model TeacherProfile {
+  id String @id @default(uuid())
+
+  userId String @unique
+  user   User   @relation(fields: [userId], references: [id])
+
+  schoolId String
+  school   School @relation(fields: [schoolId], references: [id])
+
+  teachingAssignments TeachingAssignment[]
+}
+
+model StudentProfile {
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  userId String @unique
+  user   User   @relation(fields: [userId], references: [id])
+
+  classId String
+  class   Class  @relation(fields: [classId], references: [id])
+
+  schoolId String
+  school   School @relation(fields: [schoolId], references: [id])
+
+  parentLinks       ParentStudentLink[]
+  feedbacks         ParentFeedback[]
+  lessonEngagements LessonEngagement[]
+}
+
+model ParentProfile {
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  userId String @unique
+  user   User   @relation(fields: [userId], references: [id])
+
+  studentLinks      ParentStudentLink[]
+  feedbacks         ParentFeedback[]
+  lessonEngagements LessonEngagement[]
+  notifications     Notification[]
+  streakHistories   StreakHistory[]
+}
+
+model ParentStudentLink {
+  id String @id @default(uuid())
+
+  parentId String
+  parent   ParentProfile @relation(fields: [parentId], references: [id])
+
+  studentId String
+  student   StudentProfile @relation(fields: [studentId], references: [id])
+
+  @@unique([parentId, studentId]) // Prevents duplicate linking
+}
+
+// ================= SCHOOL ORGANIZATION =================
+
+model School {
+  id         String   @id @default(uuid())
+  name       String
+  subdomain  String   @unique
+  logo       String?
+  brandColor String?
+  type       String?
+  street     String?
+  city       String?
+  state      String?
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  admins   AdminProfile[]
+  teachers TeacherProfile[]
+  classes  Class[]
+  students StudentProfile[]
+}
+
+model Class {
+  id        String   @id @default(uuid())
+  name      String
+  yearGroup String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  schoolId String
+  school   School @relation(fields: [schoolId], references: [id])
+
+  students            StudentProfile[]
+  subjects            Subject[]
+  teachingAssignments TeachingAssignment[]
+}
+
+model Subject {
   id   String @id @default(uuid())
   name String
+
+  classId String
+  class   Class  @relation(fields: [classId], references: [id])
+
+  lessonGuides        LessonGuide[]
+  teachingAssignments TeachingAssignment[]
+}
+
+model TeachingAssignment {
+  id String @id @default(uuid())
+
+  teacherId String
+  teacher   TeacherProfile @relation(fields: [teacherId], references: [id])
+
+  classId String
+  class   Class  @relation(fields: [classId], references: [id])
+
+  subjectId String
+  subject   Subject @relation(fields: [subjectId], references: [id])
+}
+
+// ================= LESSONS & ENGAGEMENT =================
+
+model LessonGuide {
+  id               String  @id @default(uuid())
+  week             String?
+  topic            String?
+  teachingMethod   String?
+  lessonNotes      String?
+  reinforcementTip String?
+  completionStatus String? @default("PENDING")
+  materials        String? // Consider String[] if using PostgreSQL
+
+  subjectId String
+  subject   Subject @relation(fields: [subjectId], references: [id])
+
+  engagements LessonEngagement[]
+}
+
+model LessonEngagement {
+  id                      String    @id @default(uuid())
+  status                  String    @default("NOT_STARTED")
+  startedAt               DateTime?
+  completedAt             DateTime?
+  totalTimeSpent          String? // Consider Int (seconds) for easier calculation
+  completionPercentage    String? // Consider Float (0.0 to 100.0)
+  pointsEarned            Int       @default(0)
+  streakCountAtCompletion Int       @default(0)
+  createdAt               DateTime  @default(now())
+  updatedAt               DateTime  @updatedAt
+
+  parentId String
+  parent   ParentProfile @relation(fields: [parentId], references: [id])
+
+  lessonId String
+  lesson   LessonGuide @relation(fields: [lessonId], references: [id])
+
+  childId String
+  child   StudentProfile @relation(fields: [childId], references: [id])
+
+  sectionEngagements LessonSectionEngagement[]
+}
+
+model LessonSectionEngagement {
+  id            String    @id @default(uuid())
+  sectionName   String
+  viewed        Boolean   @default(false)
+  timeSpent     String? // Consider Int (seconds)
+  completed     Boolean   @default(false)
+  firstViewedAt DateTime?
+  lastViewedAt  DateTime?
+
+  lessonEngagementId String
+  lessonEngagement   LessonEngagement @relation(fields: [lessonEngagementId], references: [id], onDelete: Cascade)
+}
+
+// ================= PARENT FEATURES =================
+
+model ParentFeedback {
+  id       String @id @default(uuid())
+  feedback String
+
+  parentId String
+  parent   ParentProfile @relation(fields: [parentId], references: [id])
+
+  studentProfileId String
+  student          StudentProfile @relation(fields: [studentProfileId], references: [id])
+}
+
+model Notification {
+  id      String   @id @default(uuid())
+  type    String
+  title   String
+  message String
+  channel String? // e.g., "EMAIL", "PUSH", "SMS"
+  isRead  Boolean  @default(false)
+  sentAt  DateTime @default(now())
+
+  parentId String
+  parent   ParentProfile @relation(fields: [parentId], references: [id])
+}
+
+model StreakHistory {
+  id                 String    @id @default(uuid())
+  currentStreakCount Int       @default(0)
+  longestStreak      Int       @default(0)
+  points             Int       @default(0)
+  lastCompletedWeek  DateTime?
+  updatedAt          DateTime  @updatedAt
+
+  parentId String
+  parent   ParentProfile @relation(fields: [parentId], references: [id])
+}
+
+// --- PERMISSION ENUM
+enum PermissionEnum {
+  // --- USER MANAGEMENT ---
+  CREATE_USER
+  READ_USER
+  UPDATE_USER
+  DELETE_USER
+
+  // --- STUDENT ---
+  CREATE_STUDENT
+  READ_STUDENT
+  UPDATE_STUDENT
+  DELETE_STUDENT
+
+  // --- TEACHING / LESSONS ---
+  CREATE_LESSON
+  READ_LESSON
+  UPDATE_LESSON
+  DELETE_LESSON
+
+  // --- TEACHING METHODS (core of your app) ---
+  CREATE_TEACHING_METHOD
+  READ_TEACHING_METHOD
+  UPDATE_TEACHING_METHOD
+  DELETE_TEACHING_METHOD
+
+  // --- PROGRESS / REPORTING ---
+  CREATE_PROGRESS
+  READ_PROGRESS
+  UPDATE_PROGRESS
+  DELETE_PROGRESS
+
+  // --- PARENT ACCESS ---
+  VIEW_CHILD_PROGRESS
+  VIEW_CHILD_LESSONS
+  VIEW_CHILD_TEACHING_METHODS
+
+  // --- SCHOOL / ADMIN CONTROL ---
+  FULL_ACCESS
+}
+
+// --- Role --- 
+enum UserRole {
+  ADMIN
+  TEACHER
+  PARENT
+  STUDENT
 }

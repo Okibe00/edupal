@@ -51,7 +51,26 @@ export const AnyNull = runtime.AnyNull
 
 
 export const ModelName = {
-  User: 'User'
+  RefreshToken: 'RefreshToken',
+  User: 'User',
+  Role: 'Role',
+  Permission: 'Permission',
+  RolePermission: 'RolePermission',
+  AdminProfile: 'AdminProfile',
+  TeacherProfile: 'TeacherProfile',
+  StudentProfile: 'StudentProfile',
+  ParentProfile: 'ParentProfile',
+  ParentStudentLink: 'ParentStudentLink',
+  School: 'School',
+  Class: 'Class',
+  Subject: 'Subject',
+  TeachingAssignment: 'TeachingAssignment',
+  LessonGuide: 'LessonGuide',
+  LessonEngagement: 'LessonEngagement',
+  LessonSectionEngagement: 'LessonSectionEngagement',
+  ParentFeedback: 'ParentFeedback',
+  Notification: 'Notification',
+  StreakHistory: 'StreakHistory'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -61,18 +80,252 @@ export type ModelName = (typeof ModelName)[keyof typeof ModelName]
  */
 
 export const TransactionIsolationLevel = runtime.makeStrictEnum({
+  ReadUncommitted: 'ReadUncommitted',
+  ReadCommitted: 'ReadCommitted',
+  RepeatableRead: 'RepeatableRead',
   Serializable: 'Serializable'
 } as const)
 
 export type TransactionIsolationLevel = (typeof TransactionIsolationLevel)[keyof typeof TransactionIsolationLevel]
 
 
+export const RefreshTokenScalarFieldEnum = {
+  id: 'id',
+  token: 'token',
+  userId: 'userId',
+  expiresAt: 'expiresAt',
+  revoked: 'revoked',
+  deviceInfo: 'deviceInfo',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type RefreshTokenScalarFieldEnum = (typeof RefreshTokenScalarFieldEnum)[keyof typeof RefreshTokenScalarFieldEnum]
+
+
 export const UserScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  email: 'email',
+  password: 'password',
+  roleId: 'roleId',
+  isVerified: 'isVerified',
+  createdAt: 'createdAt',
+  updateAt: 'updateAt'
+} as const
+
+export type UserScalarFieldEnum = (typeof UserScalarFieldEnum)[keyof typeof UserScalarFieldEnum]
+
+
+export const RoleScalarFieldEnum = {
   id: 'id',
   name: 'name'
 } as const
 
-export type UserScalarFieldEnum = (typeof UserScalarFieldEnum)[keyof typeof UserScalarFieldEnum]
+export type RoleScalarFieldEnum = (typeof RoleScalarFieldEnum)[keyof typeof RoleScalarFieldEnum]
+
+
+export const PermissionScalarFieldEnum = {
+  id: 'id',
+  name: 'name'
+} as const
+
+export type PermissionScalarFieldEnum = (typeof PermissionScalarFieldEnum)[keyof typeof PermissionScalarFieldEnum]
+
+
+export const RolePermissionScalarFieldEnum = {
+  id: 'id',
+  roleId: 'roleId',
+  permissionId: 'permissionId'
+} as const
+
+export type RolePermissionScalarFieldEnum = (typeof RolePermissionScalarFieldEnum)[keyof typeof RolePermissionScalarFieldEnum]
+
+
+export const AdminProfileScalarFieldEnum = {
+  id: 'id',
+  street: 'street',
+  city: 'city',
+  state: 'state',
+  tel: 'tel',
+  userId: 'userId',
+  schoolId: 'schoolId'
+} as const
+
+export type AdminProfileScalarFieldEnum = (typeof AdminProfileScalarFieldEnum)[keyof typeof AdminProfileScalarFieldEnum]
+
+
+export const TeacherProfileScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  schoolId: 'schoolId'
+} as const
+
+export type TeacherProfileScalarFieldEnum = (typeof TeacherProfileScalarFieldEnum)[keyof typeof TeacherProfileScalarFieldEnum]
+
+
+export const StudentProfileScalarFieldEnum = {
+  id: 'id',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  userId: 'userId',
+  classId: 'classId',
+  schoolId: 'schoolId'
+} as const
+
+export type StudentProfileScalarFieldEnum = (typeof StudentProfileScalarFieldEnum)[keyof typeof StudentProfileScalarFieldEnum]
+
+
+export const ParentProfileScalarFieldEnum = {
+  id: 'id',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  userId: 'userId'
+} as const
+
+export type ParentProfileScalarFieldEnum = (typeof ParentProfileScalarFieldEnum)[keyof typeof ParentProfileScalarFieldEnum]
+
+
+export const ParentStudentLinkScalarFieldEnum = {
+  id: 'id',
+  parentId: 'parentId',
+  studentId: 'studentId'
+} as const
+
+export type ParentStudentLinkScalarFieldEnum = (typeof ParentStudentLinkScalarFieldEnum)[keyof typeof ParentStudentLinkScalarFieldEnum]
+
+
+export const SchoolScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  subdomain: 'subdomain',
+  logo: 'logo',
+  brandColor: 'brandColor',
+  type: 'type',
+  street: 'street',
+  city: 'city',
+  state: 'state',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type SchoolScalarFieldEnum = (typeof SchoolScalarFieldEnum)[keyof typeof SchoolScalarFieldEnum]
+
+
+export const ClassScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  yearGroup: 'yearGroup',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  schoolId: 'schoolId'
+} as const
+
+export type ClassScalarFieldEnum = (typeof ClassScalarFieldEnum)[keyof typeof ClassScalarFieldEnum]
+
+
+export const SubjectScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  classId: 'classId'
+} as const
+
+export type SubjectScalarFieldEnum = (typeof SubjectScalarFieldEnum)[keyof typeof SubjectScalarFieldEnum]
+
+
+export const TeachingAssignmentScalarFieldEnum = {
+  id: 'id',
+  teacherId: 'teacherId',
+  classId: 'classId',
+  subjectId: 'subjectId'
+} as const
+
+export type TeachingAssignmentScalarFieldEnum = (typeof TeachingAssignmentScalarFieldEnum)[keyof typeof TeachingAssignmentScalarFieldEnum]
+
+
+export const LessonGuideScalarFieldEnum = {
+  id: 'id',
+  week: 'week',
+  topic: 'topic',
+  teachingMethod: 'teachingMethod',
+  lessonNotes: 'lessonNotes',
+  reinforcementTip: 'reinforcementTip',
+  completionStatus: 'completionStatus',
+  materials: 'materials',
+  subjectId: 'subjectId'
+} as const
+
+export type LessonGuideScalarFieldEnum = (typeof LessonGuideScalarFieldEnum)[keyof typeof LessonGuideScalarFieldEnum]
+
+
+export const LessonEngagementScalarFieldEnum = {
+  id: 'id',
+  status: 'status',
+  startedAt: 'startedAt',
+  completedAt: 'completedAt',
+  totalTimeSpent: 'totalTimeSpent',
+  completionPercentage: 'completionPercentage',
+  pointsEarned: 'pointsEarned',
+  streakCountAtCompletion: 'streakCountAtCompletion',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  parentId: 'parentId',
+  lessonId: 'lessonId',
+  childId: 'childId'
+} as const
+
+export type LessonEngagementScalarFieldEnum = (typeof LessonEngagementScalarFieldEnum)[keyof typeof LessonEngagementScalarFieldEnum]
+
+
+export const LessonSectionEngagementScalarFieldEnum = {
+  id: 'id',
+  sectionName: 'sectionName',
+  viewed: 'viewed',
+  timeSpent: 'timeSpent',
+  completed: 'completed',
+  firstViewedAt: 'firstViewedAt',
+  lastViewedAt: 'lastViewedAt',
+  lessonEngagementId: 'lessonEngagementId'
+} as const
+
+export type LessonSectionEngagementScalarFieldEnum = (typeof LessonSectionEngagementScalarFieldEnum)[keyof typeof LessonSectionEngagementScalarFieldEnum]
+
+
+export const ParentFeedbackScalarFieldEnum = {
+  id: 'id',
+  feedback: 'feedback',
+  parentId: 'parentId',
+  studentProfileId: 'studentProfileId'
+} as const
+
+export type ParentFeedbackScalarFieldEnum = (typeof ParentFeedbackScalarFieldEnum)[keyof typeof ParentFeedbackScalarFieldEnum]
+
+
+export const NotificationScalarFieldEnum = {
+  id: 'id',
+  type: 'type',
+  title: 'title',
+  message: 'message',
+  channel: 'channel',
+  isRead: 'isRead',
+  sentAt: 'sentAt',
+  parentId: 'parentId'
+} as const
+
+export type NotificationScalarFieldEnum = (typeof NotificationScalarFieldEnum)[keyof typeof NotificationScalarFieldEnum]
+
+
+export const StreakHistoryScalarFieldEnum = {
+  id: 'id',
+  currentStreakCount: 'currentStreakCount',
+  longestStreak: 'longestStreak',
+  points: 'points',
+  lastCompletedWeek: 'lastCompletedWeek',
+  updatedAt: 'updatedAt',
+  parentId: 'parentId'
+} as const
+
+export type StreakHistoryScalarFieldEnum = (typeof StreakHistoryScalarFieldEnum)[keyof typeof StreakHistoryScalarFieldEnum]
 
 
 export const SortOrder = {
@@ -81,4 +334,20 @@ export const SortOrder = {
 } as const
 
 export type SortOrder = (typeof SortOrder)[keyof typeof SortOrder]
+
+
+export const QueryMode = {
+  default: 'default',
+  insensitive: 'insensitive'
+} as const
+
+export type QueryMode = (typeof QueryMode)[keyof typeof QueryMode]
+
+
+export const NullsOrder = {
+  first: 'first',
+  last: 'last'
+} as const
+
+export type NullsOrder = (typeof NullsOrder)[keyof typeof NullsOrder]
 
