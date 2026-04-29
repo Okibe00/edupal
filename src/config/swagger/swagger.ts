@@ -66,7 +66,10 @@ const options: Options = {
     security: [{ bearerAuth: [] }],
     servers: [
       {
-        url: `http://localhost:3400`,
+        url:
+          process['env']['NODE_ENV'] === 'dev'
+            ? `http://localhost:3400`
+            : 'https://edupal-api.onrender.com:3400',
       },
     ],
   },
