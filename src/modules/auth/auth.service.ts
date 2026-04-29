@@ -122,7 +122,7 @@ export class AuthService {
 
     // TODO: replace with real email service
     const emailOptions: SendEmailOptions = {
-      to: ['okibeogomola@gmail.com'],
+      to: [`${user.email}`],
       html: resetPasswordEmail(plainToken, user.name),
       subject: 'Reset Password token',
     };
@@ -168,7 +168,7 @@ export class AuthService {
     ]);
 
     const emailOptions: SendEmailOptions = {
-      to: ['okibeogomola@gmail.com'],
+      to: [`${updatedUser.id}`],
       html: passwordResetSuccessEmail(updatedUser.name),
       subject: 'Password reset successfull',
     };
