@@ -21,7 +21,7 @@ const schemas = {
     required: ['name', 'email', 'password'],
     properties: {
       name: { type: 'string', example: 'Okibe Onmeje' },
-      email: { type: 'string', example: 'okibe@edupal.ng' },
+      email: { type: 'string', example: 'okibethedev@gmail.com' },
       password: { type: 'string', example: 'superstrongpassword' },
     },
   },
@@ -30,7 +30,7 @@ const schemas = {
     type: 'object',
     required: ['email', 'password'],
     properties: {
-      email: { type: 'string', example: 'okibe@edupal.ng' },
+      email: { type: 'string', example: 'okibeogomola@gmail.com' },
       password: { type: 'string', example: 'superstrongpassword' },
     },
   },

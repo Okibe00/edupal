@@ -13,7 +13,22 @@ export const loginSchema = signupSchema.pick({
   email: true,
   password: true,
 });
+
+export const forgotPasswordSchema = signupSchema.pick({
+  email: true,
+});
+
+export const resetPasswordSchema = z.object({
+  resetToken: z.string().length(30),
+  newPassword: z
+    .string()
+    .regex(/^[a-zA-Z0-9!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]+$/)
+    .min(8)
+    .max(20),
+});
+
 export const tokenSchema = z.object({ token: z.string() });
 
 export type signUpType = z.infer<typeof signupSchema>;
 export type loginType = z.infer<typeof loginSchema>;
+export type ResetPasswordType = z.infer<typeof resetPasswordSchema>;

@@ -1,6 +1,5 @@
 import express from 'express';
 import { Response, Request, NextFunction } from 'express';
-import patientRoute from './modules/patient/patients.routes.js';
 import { globalErrorHandler } from './common/middleware/error.middleware.js';
 import swaggerUi from 'swagger-ui-express';
 import swaggerSpec from './config/swagger/swagger.js';
@@ -47,7 +46,8 @@ app.use((req: Request, res: Response, next: NextFunction) => {
     message: 'Not Found',
   });
 });
-
+//Ensure hostname is correct  when run behind a proxy;
+app.set('trust proxy', true);
 /**
  * GLOBAL ERROR HANDLER
  */

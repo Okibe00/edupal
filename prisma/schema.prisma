@@ -42,12 +42,25 @@ model User {
   studentProfile StudentProfile?
   parentProfile  ParentProfile?
   refreshToken   RefreshToken?
+  passwordReset  PasswordReset[]
   createdAt      DateTime        @default(now())
   updateAt       DateTime        @updatedAt
 
   @@index([name])
 }
 
+//Password reset
+model PasswordReset {
+  id         String   @id @default(uuid())
+  userId     String
+  tokenHash  String
+  expiresAt  DateTime
+  createdAt  DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
 // ================= ROLES & PERMISSIONS =================
 
 model Role {

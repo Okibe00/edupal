@@ -1,6 +1,4 @@
-// import dotenv from 'dotenv'
 import { Resend } from 'resend';
-// dotenv.config()
 export interface SendEmailOptions {
   to: string | string[];
   subject: string;
@@ -11,7 +9,7 @@ export interface SendEmailOptions {
 
 export class EmailService {
   private readonly mailClient: Resend;
-  private readonly defaultFrom: string = '';
+  private readonly defaultFrom: string = 'EduPal <noreply@demo.okibe.space>';
   private readonly defaultText: string = '';
   /**
    * Injects the Resend client into the EmailService.
@@ -34,9 +32,7 @@ export class EmailService {
       text: options.text || this.defaultText,
     });
 
-    // Resend returns { data, error }. We handle the error explicitly.
     if (response.error) {
-      //retry like 3 times then schedule for later
       throw new Error(`Resend Error: ${response.error.message}`);
     }
 
@@ -46,6 +42,5 @@ export class EmailService {
 /**
  * INITIALIZE RESEND
  */
-console.log(process['env']['RESEND_API_KEY']);
 const resend = new Resend(process['env']['RESEND_API_KEY']);
 export default new EmailService(resend);

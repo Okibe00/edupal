@@ -1,5 +1,13 @@
 import { Router } from 'express';
 import authController from './auth.controller.js';
+import { validateRequestData } from '../../common/middleware/validationRequestPayload.middleware.js';
+import {
+  forgotPasswordSchema,
+  loginSchema,
+  resetPasswordSchema,
+  signupSchema,
+} from './dto/auth.dto.js';
+import { authGuard } from '../../common/middleware/authguard.middleware.js';
 
 const route = Router();
 
@@ -27,12 +35,16 @@ const route = Router();
  *       500:
  *         $ref: '#/components/responses/GenericErrorResponse'
  */
-route.post('/auth/signup', authController.signUp);
+route.post(
+  '/auth/signup',
+  validateRequestData(signupSchema, 'body'),
+  authController.signUp
+);
 /**
  * @swagger
  * /api/v1/auth/login:
  *  post:
- *    Summary: Login a user
+ *    summary: Login a user
  *    description: Creates a user and returns access and refresh tokens
  *    tags:
  *      - Auth
@@ -50,14 +62,18 @@ route.post('/auth/signup', authController.signUp);
  *      500:
  *        description: Server error
  */
-route.post('/auth/login', authController.login);
+route.post(
+  '/auth/login',
+  validateRequestData(loginSchema, 'body'),
+  authController.login
+);
 
 /**
  * @swagger
  * /api/v1/auth/refresh:
  *  get:
- *    Summary: Creates a user
- *    description: Creates a user and returns access and refresh tokens
+ *    summary: Creates a new access token.
+ *    description: Creates a new access and refresh tokens.
  *    tags:
  *      - Auth
  *    parameters:
@@ -71,5 +87,64 @@ route.post('/auth/login', authController.login);
  *        description: Server error
  */
 route.get('/auth/refresh', authController.refresh);
+
+/**
+ * @swagger
+ * /api/v1/auth/forgot-password:
+ *   post:
+ *     summary: Send a password reset token to user email
+ *     description: Creates and sends a password reset token to the user-defined email address.
+ *     tags:
+ *       - Auth
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               email:
+ *                 type: string
+ *                 example: okibeogomola@gmail.com
+ *                 format: email
+ *     responses:
+ *       200:
+ *         description: Success
+ */
+route.post(
+  '/auth/forgot-password',
+  validateRequestData(forgotPasswordSchema, 'body'),
+  authController.forgotPassword
+);
+/**
+ * @swagger
+ * /api/v1/auth/reset-password:
+ *   post:
+ *     summary: Reset user password.
+ *     description: Reset a users password.
+ *     tags:
+ *       - Auth
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               newPassword:
+ *                 type: string
+ *                 example: superStrongPassword123
+ *               resetToken:
+ *                 type: string
+ *                 example: hdddskssfjsnlfsksflskhfkdfnsdfhkfniuwekfbkdfmnfwbjk
+ *     responses:
+ *       200:
+ *         description: Success
+ */
+route.get(
+  '/auth/reset-password',
+  validateRequestData(resetPasswordSchema, 'body'),
+  authController.resetPassword
+);
 
 export default route;
