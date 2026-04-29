@@ -30,10 +30,9 @@ app.get('/api/v1/api-docs.json', (req, res) => {
 /**
  * APP ROUTES
  */
-app.get('/api/v1', async (req: Request, res: Response, next: NextFunction) => {
-  return res.status(200).json({
-    message: 'Welcome to Edupal',
-  });
+
+app.get('/', async (req: Request, res: Response, next: NextFunction) => {
+  return res.redirect('/api/v1/api-docs');
 });
 
 app.use('/api/v1', authRoute);
