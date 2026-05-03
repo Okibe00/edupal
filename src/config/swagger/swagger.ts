@@ -4,24 +4,42 @@ import {
   ValidationErrorResponse,
   ConflictErrorResponse,
   NotFoundErrorResponse,
-  UnauthorizedErrorResponse,
   GenericErrorResponse,
-} from './schema/response.js';
+  CreateUserResponse,
+  CreateClassResponse,
+  CreateSchoolResponse,
+  CreateSubjectResponse,
+  CreateTeacherAssignmentResponse,
+  UnauthorizedResponse,
+} from './schema/response.schema.js';
+
+import {
+  AssignTeacherRequest,
+  CreateClassRequest,
+  CreateSchoolRequest,
+  CreateSubjectRequest,
+} from './schema/request.schema.js';
 
 const responses = {
   ValidationErrorResponse,
   ConflictErrorResponse,
   NotFoundErrorResponse,
-  UnauthorizedErrorResponse,
   GenericErrorResponse,
+  CreateUserResponse,
+  CreateClassResponse,
+  CreateSchoolResponse,
+  CreateSubjectResponse,
+  CreateTeacherAssignmentResponse,
+  UnauthorizedResponse,
 };
+
 const schemas = {
   signupSchema: {
     type: 'object',
     required: ['name', 'email', 'password'],
     properties: {
       name: { type: 'string', example: 'Okibe Onmeje' },
-      email: { type: 'string', example: 'okibethedev@gmail.com' },
+      email: { type: 'string', example: 'okibe@edupal.ng' },
       password: { type: 'string', example: 'superstrongpassword' },
     },
   },
@@ -30,10 +48,14 @@ const schemas = {
     type: 'object',
     required: ['email', 'password'],
     properties: {
-      email: { type: 'string', example: 'okibeogomola@gmail.com' },
+      email: { type: 'string', example: 'okibe@edupal.ng' },
       password: { type: 'string', example: 'superstrongpassword' },
     },
   },
+  CreateSchoolRequest,
+  CreateClassRequest,
+  CreateSubjectRequest,
+  AssignTeacherRequest,
 };
 const refreshParam = {
   name: 'token',

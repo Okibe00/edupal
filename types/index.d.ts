@@ -8,6 +8,7 @@ declare global {
         email: string;
       };
       school?: string;
+      schoolId?: string;
     }
   }
 }
