@@ -51,29 +51,30 @@ model User {
 
 //Password reset
 model PasswordReset {
-  id         String   @id @default(uuid())
-  userId     String
-  tokenHash  String
-  expiresAt  DateTime
-  createdAt  DateTime @default(now())
+  id        String   @id @default(uuid())
+  userId    String
+  tokenHash String
+  expiresAt DateTime
+  createdAt DateTime @default(now())
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId])
 }
+
 // ================= ROLES & PERMISSIONS =================
 
 model Role {
   id   String   @id @default(uuid())
-  name UserRole @unique // e.g., "SUPER_ADMIN", "TEACHER"
+  name UserRole @unique // e.g., "SUPER_ADMIN", "TEACHER" "PARENT", "STUDENT", "SCHOOL_ADMIN"
 
   users           User[]
   rolePermissions RolePermission[]
 }
 
 model Permission {
-  id   String         @id @default(uuid())
-  name PermissionEnum @unique // e.g., "CREATE_CLASS", "DELETE_USER"
+  id   String @id @default(uuid())
+  name String @unique // e.g., "CREATE_CLASS", "DELETE_USER"
 
   rolePermissions RolePermission[]
 }
@@ -167,12 +168,13 @@ model ParentStudentLink {
 model School {
   id         String   @id @default(uuid())
   name       String
-  subdomain  String   @unique
+  subdomain  String?  @unique
   logo       String?
   brandColor String?
   type       String?
   street     String?
   city       String?
+  tel        String?
   state      String?
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
@@ -186,7 +188,7 @@ model School {
 model Class {
   id        String   @id @default(uuid())
   name      String
-  yearGroup String?
+  yearGroup Int?
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
@@ -207,6 +209,8 @@ model Subject {
 
   lessonGuides        LessonGuide[]
   teachingAssignments TeachingAssignment[]
+  createdAt           DateTime             @default(now())
+  updatedAt           DateTime             @updatedAt
 }
 
 model TeachingAssignment {
@@ -219,7 +223,9 @@ model TeachingAssignment {
   class   Class  @relation(fields: [classId], references: [id])
 
   subjectId String
-  subject   Subject @relation(fields: [subjectId], references: [id])
+  subject   Subject  @relation(fields: [subjectId], references: [id])
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 // ================= LESSONS & ENGAGEMENT =================
@@ -358,8 +364,9 @@ enum PermissionEnum {
 
 // --- Role --- 
 enum UserRole {
-  ADMIN
+  SUPER_ADMIN
   TEACHER
   PARENT
   STUDENT
+  SCHOOL_ADMIN
 }
