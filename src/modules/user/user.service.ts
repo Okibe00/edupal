@@ -1,4 +1,9 @@
-import { PrismaClient, User } from '../../../generated/prisma/client.js';
+import { threadId } from 'node:worker_threads';
+import {
+  PrismaClient,
+  User,
+  UserRole,
+} from '../../../generated/prisma/client.js';
 import { prisma } from '../../config/database.js';
 
 export class UserService {
@@ -9,9 +14,33 @@ export class UserService {
       where: { email },
     });
   }
-
-  async getUserRole() {}
-  async getUserPermision() {}
+  async findById(id: string): Promise<User | null> {
+    return await this.prismaDBClient.user.findUnique({ where: { id } });
+  }
+  async fetchRole(userId: string) {
+    return await this.prismaDBClient.user.findUnique({
+      where: { id: userId },
+      select: { role: true },
+    });
+  }
+  async fetchRoleAndPermission(userId: string) {
+    const user = await this.prismaDBClient.user.findUnique({
+      where: { id: userId },
+      include: {
+        role: {
+          include: {
+            rolePermissions: { include: { permission: true, role: true } },
+          },
+        },
+      },
+    });
+    const filteredSearch = user?.role?.rolePermissions[0];
+    const rolePerm = {
+      role: filteredSearch?.role,
+      permission: filteredSearch?.permission,
+    };
+    return rolePerm;
+  }
 }
 
 export default new UserService(prisma);

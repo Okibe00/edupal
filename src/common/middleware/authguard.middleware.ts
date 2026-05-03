@@ -7,7 +7,7 @@ export const authGuard = (req: Request, res: Response, next: NextFunction) => {
   const authHeader = req.headers.authorization;
 
   if (!authHeader || !authHeader.startsWith('Bearer ')) {
-    return res.status(401).json({ message: 'Unauthorized' });
+    return res.status(401).json({ success: false, message: 'UNAUTHORIZED' });
   }
 
   const token = authHeader.split(' ')[1] as string;

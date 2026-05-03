@@ -4,6 +4,7 @@ import { globalErrorHandler } from './common/middleware/error.middleware.js';
 import swaggerUi from 'swagger-ui-express';
 import swaggerSpec from './config/swagger/swagger.js';
 import authRoute from './modules/auth/auth.routes.js';
+import adminRoute from './modules/admin/admin.routes.js';
 import helmet from 'helmet';
 const app = express();
 
@@ -36,6 +37,7 @@ app.get('/', async (req: Request, res: Response, next: NextFunction) => {
 });
 
 app.use('/api/v1', authRoute);
+app.use('/api/v1', adminRoute);
 
 /**
  * CATCH ALL ROUTES
