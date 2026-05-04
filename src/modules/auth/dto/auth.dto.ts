@@ -7,7 +7,7 @@ export const signupSchema = z.object({
     .string()
     .regex(/^[a-zA-Z0-9!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]+$/)
     .min(8)
-    .max(20),
+    .max(50),
 });
 export const loginSchema = signupSchema.pick({
   email: true,
@@ -19,12 +19,12 @@ export const forgotPasswordSchema = signupSchema.pick({
 });
 
 export const resetPasswordSchema = z.object({
-  resetToken: z.string().length(30),
+  resetToken: z.string(),
   newPassword: z
     .string()
     .regex(/^[a-zA-Z0-9!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]+$/)
     .min(8)
-    .max(20),
+    .max(50),
 });
 
 export const tokenSchema = z.object({ token: z.string() });

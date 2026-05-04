@@ -141,7 +141,7 @@ route.post(
  *       200:
  *         description: Success
  */
-route.get(
+route.post(
   '/auth/reset-password',
   validateRequestData(resetPasswordSchema, 'body'),
   authController.resetPassword

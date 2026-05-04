@@ -109,7 +109,6 @@ export class AuthService {
 
     const plainToken = generateToken();
     const tokenHash = hashToken(plainToken);
-
     const expiresAt = new Date(Date.now() + 1000 * 60 * 30); // 30 mins
 
     await prisma.passwordReset.create({
@@ -129,43 +128,42 @@ export class AuthService {
     this.emailService.sendEmail(emailOptions);
     return 'Success';
   }
-  
+
   async resetPassword(data: ResetPasswordType) {
     const { resetToken, newPassword } = data;
-
     const tokenHash = hashToken(resetToken);
-
     const resetRecord = await prisma.passwordReset.findFirst({
       where: {
-        tokenHash,
+        tokenHash: tokenHash,
         expiresAt: {
-          gt: new Date(),
+          gte: new Date(),
         },
       },
     });
-
     if (!resetRecord) {
       throw new Error('NONSTD_USER_NOT_FOUND');
     }
 
     const hashedPassword = await bcrypt.hash(newPassword, 10);
 
-    const [updatedUser, deletedRecord] = await this.prismaDBClient.$transaction([
-      this.prismaDBClient.user.update({
-        where: { id: resetRecord.userId },
-        data: {
-          password: hashedPassword,
-        },
-      }),
+    const [updatedUser, deletedRecord] = await this.prismaDBClient.$transaction(
+      [
+        this.prismaDBClient.user.update({
+          where: { id: resetRecord.userId },
+          data: {
+            password: hashedPassword,
+          },
+        }),
 
-      this.prismaDBClient.passwordReset.deleteMany({
-        where: { userId: resetRecord.userId },
-      }),
+        this.prismaDBClient.passwordReset.deleteMany({
+          where: { userId: resetRecord.userId },
+        }),
 
-      this.prismaDBClient.refreshToken.deleteMany({
-        where: { userId: resetRecord.userId },
-      }),
-    ]);
+        this.prismaDBClient.refreshToken.deleteMany({
+          where: { userId: resetRecord.userId },
+        }),
+      ]
+    );
 
     const emailOptions: SendEmailOptions = {
       to: [`${updatedUser.id}`],
