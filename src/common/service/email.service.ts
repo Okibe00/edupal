@@ -1,3 +1,4 @@
+import 'dotenv/config'
 import { Resend } from 'resend';
 export interface SendEmailOptions {
   to: string | string[];
@@ -6,7 +7,7 @@ export interface SendEmailOptions {
   text?: string;
   from?: string;
 }
-
+console.log(process['env']['RESEND_API_KEY'])
 export class EmailService {
   private readonly mailClient: Resend;
   private readonly defaultFrom: string = 'EduPal <noreply@demo.okibe.space>';
