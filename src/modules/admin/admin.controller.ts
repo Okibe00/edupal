@@ -9,7 +9,6 @@ import { createClassSchema } from './schema/createClass.schema.js';
 import { createSubjectSchema } from './schema/createSubject.schema.js';
 import { createTeacherSchema } from './schema/createTeacher.schema.js';
 import { teachingAssignmentSchema } from './schema/teachingAssignment.schema.js';
-import path from 'node:path';
 import { logger } from '../../config/logger.js';
 import { parseExcel } from '../../common/utils/parseExcel.js';
 import { groupByParent } from '../../common/utils/groupParent.js';
@@ -88,7 +87,7 @@ export class AdminController {
         data = parseExcel(FILEPATH);
         groupedParent = groupByParent(data);
         const  parsedData = await z.parseAsync(ParentRecordSchema, groupedParent);
-        const result = await adminService.createParentStudentRecords2(parsedData, req.schoolId!);
+        const result = await adminService.createParentStudentRecords(parsedData, req.schoolId!);
         return sendSuccess(res, 200, 'File upload successfully', result);
       }
     } catch (error: any) {
