@@ -69,7 +69,7 @@ export const CreateSubjectRequest = {
   properties: {
     name: {
       type: 'string',
-      example: 'primary 5',
+      example: 'Civic Education',
     },
     classId: {
       type: 'string',

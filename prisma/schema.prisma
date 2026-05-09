@@ -210,6 +210,8 @@ model Subject {
   teachingAssignments TeachingAssignment[]
   createdAt           DateTime             @default(now())
   updatedAt           DateTime             @updatedAt
+
+  @@unique([name, classId])
 }
 
 model TeachingAssignment {
@@ -225,6 +227,8 @@ model TeachingAssignment {
   subject   Subject  @relation(fields: [subjectId], references: [id], onDelete: Cascade)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  @@unique([teacherId, classId, subjectId])
 }
 
 // ================= LESSONS & ENGAGEMENT =================
