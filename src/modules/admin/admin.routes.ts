@@ -74,7 +74,6 @@ route.post(
   '/admin/school',
   authGuard,
   roleGuard,
-  schoolGuard,
   validateRequestData(CreateSchoolSchema, 'body'),
   adminController.createSchool
 );

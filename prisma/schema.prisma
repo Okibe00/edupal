@@ -185,7 +185,7 @@ model School {
 model Class {
   id        String   @id @default(uuid())
   name      String
-  yearGroup Int?
+  yearGroup Int
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
@@ -195,6 +195,8 @@ model Class {
   children            Child[]
   subjects            Subject[]
   teachingAssignments TeachingAssignment[]
+
+  @@unique([name, yearGroup])
 }
 
 model Subject {
