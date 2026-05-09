@@ -19,35 +19,35 @@ export class AuthService {
     private readonly userService: UserService
   ) {}
 
-  async signup(data: signUpType) {
-    const { email } = data;
-    const userExist = await this.userService.findByEmail(email);
-    if (userExist) {
-      throw new Error('NONSTD_USER_EXIST');
-    }
-    const saltRound = 10;
-    const hashedPassword = await bcrypt.hash(data.password, saltRound);
-    const newUser = { ...data, password: hashedPassword };
-    const createdUser = await this.prismaDBClient.user.create({
-      data: newUser,
-      select: {
-        id: true,
-        email: true,
-        name: true,
-      },
-    });
+  // async signup(data: signUpType) {
+  //   const { email } = data;
+  //   const userExist = await this.userService.findByEmail(email);
+  //   if (userExist) {
+  //     throw new Error('NONSTD_USER_EXIST');
+  //   }
+  //   const saltRound = 10;
+  //   const hashedPassword = await bcrypt.hash(data.password, saltRound);
+  //   const newUser = { ...data, password: hashedPassword };
+  //   const createdUser = await this.prismaDBClient.user.create({
+  //     data: newUser,
+  //     select: {
+  //       id: true,
+  //       email: true,
+  //       name: true,
+  //     },
+  //   });
 
-    const accessToken = await this.generateAccessToken(
-      { id: createdUser.id, email: createdUser.email },
-      '15m'
-    );
-    const refreshToken = await this.generateRefreshTokenAndSave(
-      { id: createdUser.id, email: createdUser.email },
-      '7d'
-    );
-    //schedule a welcome email to be sent here
-    return { accessToken, createdUser, refreshToken };
-  }
+  //   const accessToken = await this.generateAccessToken(
+  //     { id: createdUser.id, email: createdUser.email },
+  //     '15m'
+  //   );
+  //   const refreshToken = await this.generateRefreshTokenAndSave(
+  //     { id: createdUser.id, email: createdUser.email },
+  //     '7d'
+  //   );
+  //   //schedule a welcome email to be sent here
+  //   return { accessToken, createdUser, refreshToken };
+  // }
   async login(data: loginType) {
     const { email, password } = data;
     const locatedUser = await this.userService.findByEmail(email);

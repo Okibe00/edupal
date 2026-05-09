@@ -12,7 +12,7 @@ import { authGuard } from '../../common/middleware/authguard.middleware.js';
 const route = Router();
 
 /**
- * @swagger
+ * 
  * /api/v1/auth/signup:
  *   post:
  *     summary: Creates a user
@@ -35,11 +35,11 @@ const route = Router();
  *       500:
  *         $ref: '#/components/responses/GenericErrorResponse'
  */
-route.post(
-  '/auth/signup',
-  validateRequestData(signupSchema, 'body'),
-  authController.signUp
-);
+// route.post(
+//   '/auth/signup',
+//   validateRequestData(signupSchema, 'body'),
+//   authController.signUp
+// );
 /**
  * @swagger
  * /api/v1/auth/login:
