@@ -1,7 +1,7 @@
 import 'dotenv/config';
 import { Resend } from 'resend';
 import { loginCredentialEmail } from '../template/parentLogin.js';
-import { logger } from '../../config/logger.js';
+
 
 export interface SendEmailOptions {
   to: string | string[];
