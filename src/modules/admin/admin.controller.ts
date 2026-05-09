@@ -13,6 +13,7 @@ import { logger } from '../../config/logger.js';
 import { parseExcel } from '../../common/utils/parseExcel.js';
 import { groupByParent } from '../../common/utils/groupParent.js';
 import { ParentRecordSchema } from './schema/parentRecord.schema.js';
+import { FetchAllSchema } from './schema/fetchAll.schema.js';
 
 export class AdminController {
   async signup(req: Request, res: Response, next: NextFunction) {
@@ -86,8 +87,14 @@ export class AdminController {
         let data, groupedParent;
         data = parseExcel(FILEPATH);
         groupedParent = groupByParent(data);
-        const  parsedData = await z.parseAsync(ParentRecordSchema, groupedParent);
-        const result = await adminService.createParentStudentRecords(parsedData, req.schoolId!);
+        const parsedData = await z.parseAsync(
+          ParentRecordSchema,
+          groupedParent
+        );
+        const result = await adminService.createParentStudentRecords(
+          parsedData,
+          req.schoolId!
+        );
         return sendSuccess(res, 200, 'File upload successfully', result);
       }
     } catch (error: any) {
@@ -100,6 +107,29 @@ export class AdminController {
           logger.info(error);
         });
       }
+    }
+  }
+  async fetchAll(req: Request, res: Response, next: NextFunction) {
+    try {
+      const query = req.query;
+      const { limit, page } = await z.parseAsync(FetchAllSchema, query);
+      const result = await adminService.getUsers(req.schoolId!, limit, page);
+      return sendSuccess(res, 200, 'Success', result);
+    } catch (error: any) {
+      return next(error);
+    }
+  }
+  async delete(req: Request, res: Response, next: NextFunction) {
+    try {
+      const body = req.body;
+      const { email } = await z.parseAsync(
+        z.object({ email: z.email() }),
+        body
+      );
+      const result = await adminService.deleteUser(email);
+      return sendSuccess(res, 200, 'Success', result);
+    } catch (error: any) {
+      return next(error);
     }
   }
 }

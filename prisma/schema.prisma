@@ -98,20 +98,20 @@ model AdminProfile {
   tel    String?
 
   userId String @unique
-  user   User   @relation(fields: [userId], references: [id])
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   schoolId String
-  school   School @relation(fields: [schoolId], references: [id])
+  school   School @relation(fields: [schoolId], references: [id], onDelete: Cascade)
 }
 
 model TeacherProfile {
   id String @id @default(uuid())
 
   userId String @unique
-  user   User   @relation(fields: [userId], references: [id])
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   schoolId String
-  school   School @relation(fields: [schoolId], references: [id])
+  school   School @relation(fields: [schoolId], references: [id], onDelete: Cascade)
 
   teachingAssignments TeachingAssignment[]
 }
@@ -125,7 +125,7 @@ model Child {
   class           Class    @relation(fields: [classId], references: [id])
 
   schoolId String
-  school   School @relation(fields: [schoolId], references: [id])
+  school   School @relation(fields: [schoolId], references: [id], onDelete: Cascade)
 
   parentLinks       ParentChildLink[]
   feedbacks         ParentFeedback[]
@@ -256,10 +256,10 @@ model LessonEngagement {
   updatedAt               DateTime  @updatedAt
 
   parentId String
-  parent   ParentProfile @relation(fields: [parentId], references: [id])
+  parent   ParentProfile @relation(fields: [parentId], references: [id], onDelete: Cascade)
 
   lessonId String
-  lesson   LessonGuide @relation(fields: [lessonId], references: [id])
+  lesson   LessonGuide @relation(fields: [lessonId], references: [id], onDelete: Cascade)
 
   childId String
   child   Child  @relation(fields: [childId], references: [id], onDelete: Cascade)
@@ -303,7 +303,7 @@ model Notification {
   sentAt  DateTime @default(now())
 
   parentId String
-  parent   ParentProfile @relation(fields: [parentId], references: [id])
+  parent   ParentProfile @relation(fields: [parentId], references: [id], onDelete: Cascade)
 }
 
 model StreakHistory {
@@ -315,7 +315,7 @@ model StreakHistory {
   updatedAt          DateTime  @updatedAt
 
   parentId String
-  parent   ParentProfile @relation(fields: [parentId], references: [id])
+  parent   ParentProfile @relation(fields: [parentId], references: [id], onDelete: Cascade)
 }
 
 // --- PERMISSION ENUM

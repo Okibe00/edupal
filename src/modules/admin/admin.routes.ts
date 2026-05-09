@@ -253,4 +253,79 @@ route.post(
   adminController.uploadParent
 );
 
+/**
+ * @swagger
+ * /api/v1/admin/user:
+ *   get:
+ *     summary: Fetch all users in a school
+ *     tags:
+ *       - Admin
+ *     parameters:
+ *       - in: query
+ *         name: page
+ *         required: true
+ *         schema:
+ *           type: number
+ *         description: The page number to fetch records from
+ *         example: 1
+ *
+ *       - in: query
+ *         name: limit
+ *         required: true
+ *         schema:
+ *           type: number
+ *         description: The number of records to retrieve at a time
+ *         example: 10
+ *
+ *     responses:
+ *       200:
+ *         description: successful!
+ *       400:
+ *         description: Request failed
+ */
+route.get(
+  '/admin/user',
+  authGuard,
+  roleGuard,
+  schoolGuard,
+  adminController.fetchAll
+);
+
+/**
+ * @swagger
+ * /api/v1/admin/user:
+ *   delete:
+ *     summary: Deletes a user from a school.
+ *     tags:
+ *       - Admin
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - email
+ *             properties:
+ *               email:
+ *                 type: string
+ *                 format: email
+ *                 descripton: 'The users email'
+ *                 example: Anu@edupal.ng
+ *     responses:
+ *       200:
+ *         description: successful!
+ *       400:
+ *         description: Bad request
+ *       500:
+ *         description: Internal  Server Error
+ */
+route.delete(
+  '/admin/user',
+  authGuard,
+  roleGuard,
+  schoolGuard,
+  adminController.delete
+);
+
 export default route;

@@ -41,6 +41,11 @@ export class UserService {
     };
     return rolePerm;
   }
+  async delete(email: string): Promise<User> {
+    return await this.prismaDBClient.user.delete({
+      where: { email },
+    });
+  }
 }
 
 export default new UserService(prisma);

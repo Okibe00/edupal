@@ -22,6 +22,7 @@ import { GroupedRecord } from '../../common/utils/groupParent.js';
 import { generatePassword } from '../../common/utils/token.js';
 import { email } from 'zod';
 import { logger } from '../../config/logger.js';
+import userService from '../user/user.service.js';
 
 class AdminService {
   constructor(
@@ -375,6 +376,44 @@ class AdminService {
       uploadedRecords.plainParentCredentials
     );
     return parents;
+  }
+
+  async getUsers(schoolId: string, limit: number = 10, page: number = 1) {
+    const skip = (page - 1) * limit;
+    const [data, total] = await this.prismaDBClient.$transaction([
+      this.prismaDBClient.user.findMany({
+       where: {
+        OR: [
+      { teacherProfile: { is: { schoolId } } },
+      { parentProfile: { is: { schoolId } } },
+      { adminProfile: { is: { schoolId } } },
+    ],
+       },
+        omit: { password: true },
+        skip,
+        take: limit,
+        orderBy: {
+          createdAt: 'desc',
+        },
+      }),
+
+      this.prismaDBClient.user.count(),
+    ]);
+
+    return {
+      data,
+      meta: {
+        total,
+        page,
+        limit,
+        totalPages: Math.ceil(total / limit),
+        hasNextPage: page * limit < total,
+        hasPreviousPage: page > 1,
+      },
+    };
+  }
+  async deleteUser(email: string): Promise<User> {
+    return await userService.delete(email);
   }
 }
 
