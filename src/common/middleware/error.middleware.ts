@@ -2,6 +2,7 @@ import { ErrorRequestHandler, Request, Response, NextFunction } from 'express';
 import { ZodError } from 'zod';
 import { Prisma } from '../../../generated/prisma/client.js';
 import { logger } from '../../config/logger.js';
+import multer from 'multer';
 
 export function globalErrorHandler(
   error: any,
@@ -20,7 +21,15 @@ export function globalErrorHandler(
       })),
     });
   }
-
+  if (error instanceof multer.MulterError) {
+    return res
+      .status(400)
+      .json({
+        status: 'error',
+        code: 'BAD_REQUEST',
+        message: 'File upload failed',
+      });
+  }
   if (error instanceof Prisma.PrismaClientKnownRequestError) {
     if (error.code === 'P2002') {
       const target =

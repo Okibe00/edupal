@@ -11,6 +11,7 @@ import {
   CreateSubjectResponse,
   CreateTeacherAssignmentResponse,
   UnauthorizedResponse,
+  ParentUploadSuccessResponse
 } from './schema/response.schema.js';
 
 import {
@@ -31,6 +32,7 @@ const responses = {
   CreateSubjectResponse,
   CreateTeacherAssignmentResponse,
   UnauthorizedResponse,
+  ParentUploadSuccessResponse
 };
 
 const schemas = {

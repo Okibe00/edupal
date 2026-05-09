@@ -39,7 +39,6 @@ model User {
   isVerified     Boolean         @default(false)
   adminProfile   AdminProfile?
   teacherProfile TeacherProfile?
-  studentProfile StudentProfile?
   parentProfile  ParentProfile?
   refreshToken   RefreshToken?
   passwordReset  PasswordReset[]
@@ -117,58 +116,56 @@ model TeacherProfile {
   teachingAssignments TeachingAssignment[]
 }
 
-model StudentProfile {
-  id        String   @id @default(uuid())
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  userId String @unique
-  user   User   @relation(fields: [userId], references: [id])
-
-  classId String
-  class   Class  @relation(fields: [classId], references: [id])
+model Child {
+  id              String   @id @default(uuid())
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  admissionNumber String   @unique
+  classId         String
+  class           Class    @relation(fields: [classId], references: [id])
 
   schoolId String
   school   School @relation(fields: [schoolId], references: [id])
 
-  parentLinks       ParentStudentLink[]
+  parentLinks       ParentChildLink[]
   feedbacks         ParentFeedback[]
   lessonEngagements LessonEngagement[]
 }
 
 model ParentProfile {
-  id        String   @id @default(uuid())
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  userId String @unique
-  user   User   @relation(fields: [userId], references: [id])
-
-  studentLinks      ParentStudentLink[]
+  id                String             @id @default(uuid())
+  createdAt         DateTime           @default(now())
+  updatedAt         DateTime           @updatedAt
+  phoneNumber       String?            @unique
+  userId            String             @unique
+  user              User               @relation(fields: [userId], references: [id], onDelete: Cascade)
+  schoolId          String
+  school            School             @relation(fields: [schoolId], references: [id], onDelete: Cascade)
+  childrenLink      ParentChildLink[]
   feedbacks         ParentFeedback[]
   lessonEngagements LessonEngagement[]
   notifications     Notification[]
   streakHistories   StreakHistory[]
 }
 
-model ParentStudentLink {
+model ParentChildLink {
   id String @id @default(uuid())
 
   parentId String
-  parent   ParentProfile @relation(fields: [parentId], references: [id])
+  parent   ParentProfile @relation(fields: [parentId], references: [id], onDelete: Cascade)
 
-  studentId String
-  student   StudentProfile @relation(fields: [studentId], references: [id])
+  childId String
+  child   Child  @relation(fields: [childId], references: [id], onDelete: Cascade)
 
-  @@unique([parentId, studentId]) // Prevents duplicate linking
+  @@unique([parentId, childId]) // Prevents duplicate linking
 }
 
 // ================= SCHOOL ORGANIZATION =================
 
 model School {
-  id         String   @id @default(uuid())
+  id         String           @id @default(uuid())
   name       String
-  subdomain  String?  @unique
+  subdomain  String?          @unique
   logo       String?
   brandColor String?
   type       String?
@@ -176,13 +173,13 @@ model School {
   city       String?
   tel        String?
   state      String?
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
-
-  admins   AdminProfile[]
-  teachers TeacherProfile[]
-  classes  Class[]
-  students StudentProfile[]
+  createdAt  DateTime         @default(now())
+  updatedAt  DateTime         @updatedAt
+  parents    ParentProfile[]
+  admins     AdminProfile[]
+  teachers   TeacherProfile[]
+  classes    Class[]
+  children   Child[]
 }
 
 model Class {
@@ -193,9 +190,9 @@ model Class {
   updatedAt DateTime @updatedAt
 
   schoolId String
-  school   School @relation(fields: [schoolId], references: [id])
+  school   School @relation(fields: [schoolId], references: [id], onDelete: Cascade)
 
-  students            StudentProfile[]
+  children            Child[]
   subjects            Subject[]
   teachingAssignments TeachingAssignment[]
 }
@@ -205,7 +202,7 @@ model Subject {
   name String
 
   classId String
-  class   Class  @relation(fields: [classId], references: [id])
+  class   Class  @relation(fields: [classId], references: [id], onDelete: Cascade)
 
   lessonGuides        LessonGuide[]
   teachingAssignments TeachingAssignment[]
@@ -217,13 +214,13 @@ model TeachingAssignment {
   id String @id @default(uuid())
 
   teacherId String
-  teacher   TeacherProfile @relation(fields: [teacherId], references: [id])
+  teacher   TeacherProfile @relation(fields: [teacherId], references: [id], onDelete: Cascade)
 
   classId String
-  class   Class  @relation(fields: [classId], references: [id])
+  class   Class  @relation(fields: [classId], references: [id], onDelete: Cascade)
 
   subjectId String
-  subject   Subject  @relation(fields: [subjectId], references: [id])
+  subject   Subject  @relation(fields: [subjectId], references: [id], onDelete: Cascade)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
@@ -241,7 +238,7 @@ model LessonGuide {
   materials        String? // Consider String[] if using PostgreSQL
 
   subjectId String
-  subject   Subject @relation(fields: [subjectId], references: [id])
+  subject   Subject @relation(fields: [subjectId], references: [id], onDelete: Cascade)
 
   engagements LessonEngagement[]
 }
@@ -265,7 +262,7 @@ model LessonEngagement {
   lesson   LessonGuide @relation(fields: [lessonId], references: [id])
 
   childId String
-  child   StudentProfile @relation(fields: [childId], references: [id])
+  child   Child  @relation(fields: [childId], references: [id], onDelete: Cascade)
 
   sectionEngagements LessonSectionEngagement[]
 }
@@ -292,8 +289,8 @@ model ParentFeedback {
   parentId String
   parent   ParentProfile @relation(fields: [parentId], references: [id])
 
-  studentProfileId String
-  student          StudentProfile @relation(fields: [studentProfileId], references: [id])
+  childId String
+  child   Child  @relation(fields: [childId], references: [id])
 }
 
 model Notification {

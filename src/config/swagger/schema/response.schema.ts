@@ -417,3 +417,146 @@ export const UnauthorizedResponse = {
     },
   },
 };
+export const ParentUploadSuccessResponse = {
+  description: 'File upload successfully',
+  content: {
+    'application/json': {
+      schema: {
+        type: 'object',
+        properties: {
+          success: {
+            type: 'boolean',
+            example: true,
+          },
+
+          message: {
+            type: 'string',
+            example: 'File upload successfully',
+          },
+
+          data: {
+            type: 'array',
+            items: {
+              type: 'object',
+              properties: {
+                id: {
+                  type: 'string',
+                  format: 'uuid',
+                  example: '6bf9fc9c-91fc-4579-8b05-898f323b4bae',
+                },
+
+                name: {
+                  type: 'string',
+                  example: 'John Doe',
+                },
+
+                email: {
+                  type: 'string',
+                  format: 'email',
+                  example: 'testcyclewise@gmail.com',
+                },
+
+                password: {
+                  type: 'string',
+                  example: '01dd5322fe4aa858',
+                },
+
+                roleId: {
+                  type: 'string',
+                  format: 'uuid',
+                  example: 'ad692c08-10ae-4969-acbf-f40b27da684a',
+                },
+
+                isVerified: {
+                  type: 'boolean',
+                  example: false,
+                },
+
+                createdAt: {
+                  type: 'string',
+                  format: 'date-time',
+                  example: '2026-05-09T06:47:36.335Z',
+                },
+
+                updateAt: {
+                  type: 'string',
+                  format: 'date-time',
+                  example: '2026-05-09T06:47:36.335Z',
+                },
+
+                parentProfile: {
+                  type: 'object',
+                  properties: {
+                    id: {
+                      type: 'string',
+                      format: 'uuid',
+                      example: '1ffb6d09-2cd9-4cfe-acf4-3c863723c57f',
+                    },
+
+                    createdAt: {
+                      type: 'string',
+                      format: 'date-time',
+                      example: '2026-05-09T06:47:36.367Z',
+                    },
+
+                    updatedAt: {
+                      type: 'string',
+                      format: 'date-time',
+                      example: '2026-05-09T06:47:36.367Z',
+                    },
+
+                    phoneNumber: {
+                      type: 'string',
+                      example: '08012345678',
+                    },
+
+                    userId: {
+                      type: 'string',
+                      format: 'uuid',
+                      example: '6bf9fc9c-91fc-4579-8b05-898f323b4bae',
+                    },
+
+                    schoolId: {
+                      type: 'string',
+                      format: 'uuid',
+                      example: '7ef3d438-128b-4fa0-85b0-660bf48ad420',
+                    },
+
+                    childrenLink: {
+                      type: 'array',
+                      items: {
+                        type: 'object',
+                        properties: {
+                          id: {
+                            type: 'string',
+                            format: 'uuid',
+                            example:
+                              '38fb905a-c46b-41d7-af39-a9e255e45971',
+                          },
+
+                          parentId: {
+                            type: 'string',
+                            format: 'uuid',
+                            example:
+                              '1ffb6d09-2cd9-4cfe-acf4-3c863723c57f',
+                          },
+
+                          childId: {
+                            type: 'string',
+                            format: 'uuid',
+                            example:
+                              'b036016c-5790-4bd6-bbd2-284423dab695',
+                          },
+                        },
+                      },
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+  },
+};

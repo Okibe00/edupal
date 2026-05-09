@@ -10,6 +10,7 @@ import { createSubjectSchema } from './schema/createSubject.schema.js';
 import { createTeacherSchema } from './schema/createTeacher.schema.js';
 import { schoolGuard } from '../../common/middleware/schoolguard.middleware.js';
 import { teachingAssignmentSchema } from './schema/teachingAssignment.schema.js';
+import { upload } from '../../common/middleware/upload.middleware.js';
 
 const route = Router();
 
@@ -217,4 +218,39 @@ route.post(
   validateRequestData(teachingAssignmentSchema, 'body'),
   adminController.assignTeacherToClass
 );
+
+/**
+ * @swagger
+ * /api/v1/admin/upload/parent:
+ *   post:
+ *     summary: Upload a single file
+ *     tags:
+ *       - Admin
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         multipart/form-data:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - parent
+ *             properties:
+ *               parent:
+ *                 type: string
+ *                 format: binary
+ *     responses:
+ *       200:
+ *         $ref: '#/components/responses/ParentUploadSuccessResponse'
+ *       400:
+ *         description: File upload failed
+ */
+route.post(
+  '/admin/upload/parent',
+  authGuard,
+  roleGuard,
+  schoolGuard,
+  upload.single('parent'),
+  adminController.uploadParent
+);
+
 export default route;

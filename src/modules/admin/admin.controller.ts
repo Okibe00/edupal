@@ -1,4 +1,5 @@
 import { Request, Response, NextFunction } from 'express';
+import fs from 'node:fs/promises';
 import z from 'zod';
 import { createAdminSchema } from './schema/adminSignup.schema.js';
 import adminService from './admin.service.js';
@@ -8,6 +9,11 @@ import { createClassSchema } from './schema/createClass.schema.js';
 import { createSubjectSchema } from './schema/createSubject.schema.js';
 import { createTeacherSchema } from './schema/createTeacher.schema.js';
 import { teachingAssignmentSchema } from './schema/teachingAssignment.schema.js';
+import path from 'node:path';
+import { logger } from '../../config/logger.js';
+import { parseExcel } from '../../common/utils/parseExcel.js';
+import { groupByParent } from '../../common/utils/groupParent.js';
+import { ParentRecordSchema } from './schema/parentRecord.schema.js';
 
 export class AdminController {
   async signup(req: Request, res: Response, next: NextFunction) {
@@ -72,6 +78,29 @@ export class AdminController {
       );
     } catch (error: any) {
       return next(error);
+    }
+  }
+  async uploadParent(req: Request, res: Response, next: NextFunction) {
+    try {
+      const FILEPATH = req.file?.path;
+      if (FILEPATH) {
+        let data, groupedParent;
+        data = parseExcel(FILEPATH);
+        groupedParent = groupByParent(data);
+        const  parsedData = await z.parseAsync(ParentRecordSchema, groupedParent);
+        const result = await adminService.createParentStudentRecords2(parsedData, req.schoolId!);
+        return sendSuccess(res, 200, 'File upload successfully', result);
+      }
+    } catch (error: any) {
+      return next(error);
+    } finally {
+      const filePath = req.file?.path;
+      if (filePath) {
+        logger.info(`Deleting ${filePath}`);
+        fs.unlink(filePath).catch((error) => {
+          logger.info(error);
+        });
+      }
     }
   }
 }

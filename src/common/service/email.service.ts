@@ -1,5 +1,8 @@
-import 'dotenv/config'
+import 'dotenv/config';
 import { Resend } from 'resend';
+import { loginCredentialEmail } from '../template/parentLogin.js';
+import { logger } from '../../config/logger.js';
+
 export interface SendEmailOptions {
   to: string | string[];
   subject: string;
@@ -7,7 +10,6 @@ export interface SendEmailOptions {
   text?: string;
   from?: string;
 }
-console.log(process['env']['RESEND_API_KEY'])
 export class EmailService {
   private readonly mailClient: Resend;
   private readonly defaultFrom: string = 'EduPal <noreply@demo.okibe.space>';
@@ -38,6 +40,26 @@ export class EmailService {
     }
 
     return response.data;
+  }
+
+  async sendBulkCredentials(
+    users: {
+      name: string;
+      email: string;
+      password: string;
+      phone: string;
+    }[]
+  ): Promise<void> {
+    const emails = users.map((user) => ({
+      from: 'School Portal <noreply@demo.okibe.space>',
+      to: user.email,
+      subject: 'Your Login Credentials',
+      html: loginCredentialEmail(user),
+    }));
+    const response = await this.mailClient.batch.send(emails);
+    if (response.error) {
+      throw new Error(`Resend Error: ${response.error.message}`);
+    }
   }
 }
 /**

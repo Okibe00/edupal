@@ -17,6 +17,11 @@ import { createClassType } from './schema/createClass.schema.js';
 import { createTeacherType } from './schema/createTeacher.schema.js';
 import { teachingAssignmentType } from './schema/teachingAssignment.schema.js';
 import { createSubjectType } from './schema/createSubject.schema.js';
+import { cs } from 'zod/v4/locales';
+import { GroupedRecord } from '../../common/utils/groupParent.js';
+import { generatePassword } from '../../common/utils/token.js';
+import { email } from 'zod';
+import { logger } from '../../config/logger.js';
 
 class AdminService {
   constructor(
@@ -98,7 +103,7 @@ class AdminService {
 
   async createTeacher(
     data: createTeacherType,
-    schoolId: string,
+    schoolId: string
   ): Promise<User> {
     const permissionNames = [
       'READ_TEACHING_METHOD',
@@ -155,8 +160,385 @@ class AdminService {
       });
     return teacherAssignment;
   }
-  //This is a heavy task that needs to go in a worker
-  async createParentStudentRecords(data: object) {}
+  /**
+   * You need to investigate if a database lock is something that can happen with this function.
+   */
+  async createParentStudentRecords(schoolId: string) {
+    const parentRole = await this.prismaDBClient.role.upsert({
+      where: { name: 'PARENT' },
+      update: {},
+      create: { name: 'PARENT' },
+    });
+    const parsedData = [
+      {
+        parent: {
+          name: 'John Doe',
+          phone: '08012345678',
+          email: 'testcyclewise@gmail.com',
+          password: generatePassword(),
+        },
+        children: [
+          {
+            admissionNumber: 'STU-001',
+            name: 'Mary Doe',
+            class: 'Primary 1',
+          },
+          {
+            admissionNumber: 'STU-002',
+            name: 'James Doe',
+            class: 'Primary 1',
+          },
+          {
+            admissionNumber: 'STU-022',
+            name: 'Sherlock Doe',
+            class: 'Primary 2',
+          },
+        ],
+      },
+      {
+        parent: {
+          name: 'Sarah Lee',
+          phone: '08098765432',
+          email: 'okibeonmeje5@gmail.com',
+          password: generatePassword(),
+        },
+        children: [
+          {
+            admissionNumber: 'STU-003',
+            name: 'Chris Lee',
+            class: 'Primary 2',
+          },
+        ],
+      },
+    ];
+    const parentUsers = parsedData.map((item) => ({
+      name: item.parent.name,
+      email: item.parent.email,
+      password: item.parent.password,
+      roleId: parentRole.id,
+    }));
+
+    const createdParent = await this.prismaDBClient.user.createMany({
+      data: parentUsers,
+      skipDuplicates: true,
+    });
+    const parents = await this.prismaDBClient.user.findMany({
+      where: {
+        email: {
+          in: parsedData.map((item) => item.parent.email),
+        },
+      },
+    });
+    const userMap = new Map();
+    parents.forEach((user) => {
+      userMap.set(user.email, user.id);
+    });
+    const parentProfiles = parsedData.map((item) => ({
+      userId: userMap.get(item.parent.email),
+      phoneNumber: item.parent.phone,
+      schoolId,
+    }));
+    const createdProfiles = await this.prismaDBClient.parentProfile.createMany({
+      data: parentProfiles,
+      skipDuplicates: true,
+    });
+    const profileMap = new Map();
+    const profiles = await this.prismaDBClient.parentProfile.findMany({
+      where: {
+        userId: {
+          in: parents.map((u) => u.id),
+        },
+      },
+    });
+    profiles.forEach((profile) => {
+      profileMap.set(profile.userId, profile.id);
+    });
+    const classMap = new Map();
+    const schoolClasses = await this.prismaDBClient.class.findMany({
+      where: { schoolId },
+    });
+    schoolClasses.forEach((schoolClass) => {
+      classMap.set(schoolClass.name, schoolClass.id);
+    });
+    const children: {
+      admissionNumber: string;
+      classId: string;
+      schoolId: string;
+    }[] = [];
+
+    parsedData.forEach((item) => {
+      item.children.forEach((child) => {
+        children.push({
+          admissionNumber: child.admissionNumber,
+          classId: classMap.get(child.class),
+          schoolId,
+        });
+      });
+    });
+    const childRecordCount = await this.prismaDBClient.child.createMany({
+      data: children,
+      skipDuplicates: true,
+    });
+    const childRecords = await this.prismaDBClient.child.findMany({
+      where: {
+        admissionNumber: {
+          in: children.map((child) => child.admissionNumber),
+        },
+      },
+    });
+    const childMap = new Map();
+
+    childRecords.forEach((child) => {
+      childMap.set(child.admissionNumber, child.id);
+    });
+    const links: { parentId: string; childId: string }[] = [];
+    parsedData.forEach((item) => {
+      const userId = userMap.get(item.parent.email);
+
+      const parentId = profileMap.get(userId);
+
+      item.children.forEach((child) => {
+        const childId = childMap.get(child.admissionNumber);
+
+        links.push({
+          parentId,
+          childId,
+        });
+      });
+    });
+    const parentChildLink =
+      await this.prismaDBClient.parentChildLink.createManyAndReturn({
+        data: links,
+        skipDuplicates: true,
+      });
+    const uploadedRecord = await this.prismaDBClient.user.findMany({
+      where: {
+        email: { in: parsedData.map((item) => item.parent.email) },
+      },
+      include: {
+        parentProfile: {
+          include: { childrenLink: true },
+        },
+      },
+    });
+    return uploadedRecord;
+  }
+
+  async createParentStudentRecords2(data: GroupedRecord[], schoolId: string) {
+    const uploadedRecords = await this.prismaDBClient.$transaction(
+      async (tx) => {
+        const parentRole = await tx.role.upsert({
+          where: { name: 'PARENT' },
+          update: {},
+          create: { name: 'PARENT' },
+        });
+        const plainParentCredentials = data.map((record) => ({
+          ...record.parent,
+        }));
+
+        const parsedData = await Promise.all(
+          data.map(async (item) => ({
+            ...item,
+            parent: {
+              ...item.parent,
+              password: await bcrypt.hash(item.parent.password, 10),
+            },
+          }))
+        );
+        /**
+         * CREATE PARENTS
+         */
+        const parentUsers = parsedData.map((item) => ({
+          name: item.parent.name,
+          email: item.parent.email,
+          password: item.parent.password,
+          roleId: parentRole.id,
+        }));
+
+        await tx.user.createMany({
+          data: parentUsers,
+          skipDuplicates: true,
+        });
+
+        const parents = await tx.user.findMany({
+          where: {
+            email: {
+              in: parsedData.map((item) => item.parent.email),
+            },
+          },
+        });
+
+        const userMap = new Map<string, string>();
+
+        parents.forEach((user) => {
+          userMap.set(user.email, user.id);
+        });
+
+        /**
+         * CREATE PARENT PROFILES
+         */
+        const parentProfiles = parsedData.map((item) => {
+          const userId = userMap.get(item.parent.email);
+
+          if (!userId) {
+            throw new Error(`Parent user not found for ${item.parent.email}`);
+          }
+
+          return {
+            userId,
+            phoneNumber: item.parent.phone,
+            schoolId,
+          };
+        });
+
+        await tx.parentProfile.createMany({
+          data: parentProfiles,
+          skipDuplicates: true,
+        });
+
+        const profiles = await tx.parentProfile.findMany({
+          where: {
+            userId: {
+              in: parents.map((u) => u.id),
+            },
+          },
+        });
+
+        const profileMap = new Map<string, string>();
+
+        profiles.forEach((profile) => {
+          profileMap.set(profile.userId, profile.id);
+        });
+
+        /**
+         * FETCH CLASSES
+         */
+        const schoolClasses = await tx.class.findMany({
+          where: { schoolId },
+        });
+
+        const classMap = new Map<string, string>();
+
+        schoolClasses.forEach((schoolClass) => {
+          classMap.set(schoolClass.name, schoolClass.id);
+        });
+
+        /**
+         * CREATE CHILDREN
+         */
+        const children: {
+          admissionNumber: string;
+          classId: string;
+          schoolId: string;
+        }[] = [];
+
+        parsedData.forEach((item) => {
+          item.children.forEach((child) => {
+            const classId = classMap.get(child.class);
+
+            if (!classId) {
+              throw new Error(`Class ${child.class} not found`);
+            }
+
+            children.push({
+              admissionNumber: child.admissionNumber,
+              classId,
+              schoolId,
+            });
+          });
+        });
+
+        await tx.child.createMany({
+          data: children,
+          skipDuplicates: true,
+        });
+
+        const childRecords = await tx.child.findMany({
+          where: {
+            admissionNumber: {
+              in: children.map((child) => child.admissionNumber),
+            },
+          },
+        });
+
+        const childMap = new Map<string, string>();
+
+        childRecords.forEach((child) => {
+          childMap.set(child.admissionNumber, child.id);
+        });
+
+        /**
+         * CREATE PARENT-CHILD LINKS
+         */
+        const links: { parentId: string; childId: string }[] = [];
+
+        parsedData.forEach((item) => {
+          const userId = userMap.get(item.parent.email);
+
+          if (!userId) {
+            throw new Error(`User ID missing for ${item.parent.email}`);
+          }
+
+          const parentId = profileMap.get(userId);
+
+          if (!parentId) {
+            throw new Error(`Parent profile missing for ${item.parent.email}`);
+          }
+
+          item.children.forEach((child) => {
+            const childId = childMap.get(child.admissionNumber);
+
+            if (!childId) {
+              throw new Error(`Child missing for ${child.admissionNumber}`);
+            }
+
+            links.push({
+              parentId,
+              childId,
+            });
+          });
+        });
+
+        await tx.parentChildLink.createMany({
+          data: links,
+          skipDuplicates: true,
+        });
+
+        /**
+         * RETURN UPLOADED RECORDS
+         */
+        const uploadedRecord = await tx.user.findMany({
+          where: {
+            email: {
+              in: parsedData.map((item) => item.parent.email),
+            },
+          },
+          include: {
+            parentProfile: {
+              include: {
+                childrenLink: true,
+              },
+            },
+          },
+        });
+
+        /**
+         * MAIL PARENT LOGIN CREDENTIALS
+         */
+        return { insertedRecord: uploadedRecord, plainParentCredentials };
+      }
+    );
+    const parents = uploadedRecords.plainParentCredentials.map((record) => {
+      return {
+        name: record.name,
+        email: record.email,
+      };
+    });
+    this.emailService.sendBulkCredentials(
+      uploadedRecords.plainParentCredentials
+    );
+    return parents;
+  }
 }
 
 export default new AdminService(prisma, emailService);
