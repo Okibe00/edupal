@@ -166,7 +166,7 @@ export class AuthService {
     );
 
     const emailOptions: SendEmailOptions = {
-      to: [`${updatedUser.id}`],
+      to: [`${updatedUser.email}`],
       html: passwordResetSuccessEmail(updatedUser.name),
       subject: 'Password reset successfull',
     };
