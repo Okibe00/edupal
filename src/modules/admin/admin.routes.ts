@@ -254,6 +254,33 @@ route.post(
 
 /**
  * @swagger
+ * /api/v1/admin/parent/register:
+ *   post:
+ *     summary: Register parent and child
+ *     tags:
+ *       - Admin
+ *     requestBody:
+ *       $ref: '#/components/requestBodies/RegisterParentRequest'
+ *     responses:
+ *       201:
+ *         description: Parent registered successfully
+ *       400:
+ *         description: Validation error
+ *       409:
+ *         description: Parent or admission number already exists
+ *       500:
+ *         description: Internal server error
+ */
+route.post(
+  '/admin/parent/register',
+  authGuard,
+  roleGuard,
+  schoolGuard,
+  adminController.registerParent
+);
+
+/**
+ * @swagger
  * /api/v1/admin/user:
  *   get:
  *     summary: Fetch all users in a school
