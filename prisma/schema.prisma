@@ -119,6 +119,7 @@ model TeacherProfile {
 model Child {
   id              String   @id @default(uuid())
   createdAt       DateTime @default(now())
+  name            String
   updatedAt       DateTime @updatedAt
   admissionNumber String   @unique
   classId         String
@@ -234,19 +235,27 @@ model TeachingAssignment {
 // ================= LESSONS & ENGAGEMENT =================
 
 model LessonGuide {
-  id               String  @id @default(uuid())
-  week             String?
-  topic            String?
-  teachingMethod   String?
-  lessonNotes      String?
-  reinforcementTip String?
-  completionStatus String? @default("PENDING")
-  materials        String? // Consider String[] if using PostgreSQL
+  id                 String         @id @default(uuid())
+  week               Int
+  topic              String?
+  learningObjectives String?
+  status             DocumentStatus @default(DRAFT)
+  learningContent    String // Consider String[] if using PostgreSQL
 
   subjectId String
   subject   Subject @relation(fields: [subjectId], references: [id], onDelete: Cascade)
 
   engagements LessonEngagement[]
+  createdAt   DateTime           @default(now())
+  updatedAt   DateTime           @updatedAt
+
+  @@unique([subjectId, week])
+}
+
+enum DocumentStatus {
+  DRAFT
+  PUBLISHED
+  ARCHIVED
 }
 
 model LessonEngagement {
@@ -284,6 +293,8 @@ model LessonSectionEngagement {
 
   lessonEngagementId String
   lessonEngagement   LessonEngagement @relation(fields: [lessonEngagementId], references: [id], onDelete: Cascade)
+  createdAt          DateTime         @default(now())
+  updatedAt          DateTime         @updatedAt
 }
 
 // ================= PARENT FEATURES =================
@@ -295,8 +306,10 @@ model ParentFeedback {
   parentId String
   parent   ParentProfile @relation(fields: [parentId], references: [id])
 
-  childId String
-  child   Child  @relation(fields: [childId], references: [id])
+  childId   String
+  child     Child    @relation(fields: [childId], references: [id])
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model Notification {
@@ -308,8 +321,10 @@ model Notification {
   isRead  Boolean  @default(false)
   sentAt  DateTime @default(now())
 
-  parentId String
-  parent   ParentProfile @relation(fields: [parentId], references: [id], onDelete: Cascade)
+  parentId  String
+  parent    ParentProfile @relation(fields: [parentId], references: [id], onDelete: Cascade)
+  createdAt DateTime      @default(now())
+  updatedAt DateTime      @updatedAt
 }
 
 model StreakHistory {
@@ -320,8 +335,9 @@ model StreakHistory {
   lastCompletedWeek  DateTime?
   updatedAt          DateTime  @updatedAt
 
-  parentId String
-  parent   ParentProfile @relation(fields: [parentId], references: [id], onDelete: Cascade)
+  parentId  String
+  parent    ParentProfile @relation(fields: [parentId], references: [id], onDelete: Cascade)
+  createdAt DateTime      @default(now())
 }
 
 // --- PERMISSION ENUM
