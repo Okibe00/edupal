@@ -17,11 +17,7 @@ import { createClassType } from './schema/createClass.schema.js';
 import { createTeacherType } from './schema/createTeacher.schema.js';
 import { teachingAssignmentType } from './schema/teachingAssignment.schema.js';
 import { createSubjectType } from './schema/createSubject.schema.js';
-import { cs } from 'zod/v4/locales';
 import { GroupedRecord } from '../../common/utils/groupParent.js';
-import { generatePassword } from '../../common/utils/token.js';
-import { email } from 'zod';
-import { logger } from '../../config/logger.js';
 import userService from '../user/user.service.js';
 
 class AdminService {
@@ -268,6 +264,7 @@ class AdminService {
           admissionNumber: string;
           classId: string;
           schoolId: string;
+          name: string;
         }[] = [];
 
         parsedData.forEach((item) => {
@@ -282,6 +279,7 @@ class AdminService {
               admissionNumber: child.admissionNumber,
               classId,
               schoolId,
+              name: child.name,
             });
           });
         });
@@ -382,13 +380,13 @@ class AdminService {
     const skip = (page - 1) * limit;
     const [data, total] = await this.prismaDBClient.$transaction([
       this.prismaDBClient.user.findMany({
-       where: {
-        OR: [
-      { teacherProfile: { is: { schoolId } } },
-      { parentProfile: { is: { schoolId } } },
-      { adminProfile: { is: { schoolId } } },
-    ],
-       },
+        where: {
+          OR: [
+            { teacherProfile: { is: { schoolId } } },
+            { parentProfile: { is: { schoolId } } },
+            { adminProfile: { is: { schoolId } } },
+          ],
+        },
         omit: { password: true },
         skip,
         take: limit,

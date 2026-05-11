@@ -73,7 +73,7 @@ route.post(
 route.post(
   '/admin/school',
   authGuard,
-  roleGuard,
+  roleGuard('SCHOOL_ADMIN'),
   validateRequestData(CreateSchoolSchema, 'body'),
   adminController.createSchool
 );
@@ -107,7 +107,7 @@ route.post(
 route.post(
   '/admin/class',
   authGuard,
-  roleGuard,
+  roleGuard('SCHOOL_ADMIN'),
   schoolGuard,
   validateRequestData(createClassSchema, 'body'),
   adminController.createClass
@@ -142,7 +142,7 @@ route.post(
 route.post(
   '/admin/subject',
   authGuard,
-  roleGuard,
+  roleGuard('SCHOOL_ADMIN'),
   schoolGuard,
   validateRequestData(createSubjectSchema, 'body'),
   adminController.createSubject
@@ -177,7 +177,7 @@ route.post(
 route.post(
   '/admin/teacher',
   authGuard,
-  roleGuard,
+  roleGuard('SCHOOL_ADMIN'),
   schoolGuard,
   validateRequestData(createTeacherSchema, 'body'),
   adminController.createTeacher
@@ -212,7 +212,7 @@ route.post(
 route.post(
   '/admin/assign-teacher',
   authGuard,
-  roleGuard,
+  roleGuard('SCHOOL_ADMIN'),
   schoolGuard,
   validateRequestData(teachingAssignmentSchema, 'body'),
   adminController.assignTeacherToClass
@@ -246,7 +246,7 @@ route.post(
 route.post(
   '/admin/upload/parent',
   authGuard,
-  roleGuard,
+  roleGuard('SCHOOL_ADMIN'),
   schoolGuard,
   upload.single('parent'),
   adminController.uploadParent
@@ -260,7 +260,7 @@ route.post(
  *     tags:
  *       - Admin
  *     requestBody:
- *       $ref: '#/components/requestBodies/RegisterParentRequest'
+ *       $ref: '#/components/schemas/RegisterParentRequest'
  *     responses:
  *       201:
  *         description: Parent registered successfully
@@ -274,7 +274,7 @@ route.post(
 route.post(
   '/admin/parent/register',
   authGuard,
-  roleGuard,
+  roleGuard('SCHOOL_ADMIN'),
   schoolGuard,
   adminController.registerParent
 );
@@ -312,7 +312,7 @@ route.post(
 route.get(
   '/admin/user',
   authGuard,
-  roleGuard,
+  roleGuard('SCHOOL_ADMIN'),
   schoolGuard,
   adminController.fetchAll
 );
@@ -349,7 +349,7 @@ route.get(
 route.delete(
   '/admin/user',
   authGuard,
-  roleGuard,
+  roleGuard('SCHOOL_ADMIN'),
   schoolGuard,
   adminController.delete
 );
