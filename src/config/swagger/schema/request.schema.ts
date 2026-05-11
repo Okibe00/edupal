@@ -99,3 +99,100 @@ export const AssignTeacherRequest = {
     },
   },
 };
+export const CreateLessonGuideRequest = {
+  description: 'Create lesson guide request body',
+  required: true,
+  content: {
+    'multipart/form-data': {
+      schema: {
+        type: 'object',
+        required: ['status', 'week', 'subjectId', 'topic'],
+        properties: {
+          status: {
+            type: 'string',
+            enum: ['DRAFT', 'ARCHIVED', 'PUBLISHED'],
+            example: 'DRAFT',
+          },
+          week: {
+            type: 'number',
+            example: 3,
+          },
+          subjectId: {
+            type: 'string',
+            format: 'uuid',
+            example: '550e8400-e29b-41d4-a716-446655440000',
+          },
+          topic: {
+            type: 'string',
+            example: 'Introduction to Algebra',
+          },
+          learningObjectives: {
+            type: 'string',
+            example: 'Students should understand basic algebraic expressions.',
+          },
+          learningContent: {
+            type: 'string',
+            example:
+              'Algebra is a branch of mathematics dealing with symbols and rules for manipulating those symbols.',
+          },
+          file: {
+            type: 'string',
+            format: 'binary',
+            description:
+              'Upload lesson guide attachment (PDF, image, audio, etc.)',
+          },
+        },
+      },
+    },
+  },
+};
+
+export const RegisterParentRequest = {
+  description: 'Register multiple parent and child records',
+  required: true,
+  content: {
+    'application/json': {
+      schema: {
+        type: 'array',
+        items: {
+          type: 'object',
+          required: [
+            'parent_name',
+            'parent_phone',
+            'parent_email',
+            'child_name',
+            'child_class',
+            'admission_number',
+          ],
+          properties: {
+            parent_name: {
+              type: 'string',
+              example: 'John Doe',
+            },
+            parent_phone: {
+              type: 'string',
+              example: '+2348012345678',
+            },
+            parent_email: {
+              type: 'string',
+              format: 'email',
+              example: 'johndoe@gmail.com',
+            },
+            child_name: {
+              type: 'string',
+              example: 'Jane Doe',
+            },
+            child_class: {
+              type: 'string',
+              example: 'Primary 5',
+            },
+            admission_number: {
+              type: 'string',
+              example: 'ADM-2026-001',
+            },
+          },
+        },
+      },
+    },
+  },
+};

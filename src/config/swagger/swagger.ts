@@ -12,6 +12,10 @@ import {
   CreateTeacherAssignmentResponse,
   UnauthorizedResponse,
   ParentUploadSuccessResponse,
+  TeacherProfileResponse,
+  TeacherSubjectsResponse,
+  TeacherClassChildrenResponse,
+  TeacherAssignmentsResponse,
 } from './schema/response.schema.js';
 
 import {
@@ -20,7 +24,7 @@ import {
   CreateSchoolRequest,
   CreateSubjectRequest,
   CreateLessonGuideRequest,
-  RegisterParentRequest
+  RegisterParentRequest,
 } from './schema/request.schema.js';
 
 const responses = {
@@ -35,6 +39,10 @@ const responses = {
   CreateTeacherAssignmentResponse,
   UnauthorizedResponse,
   ParentUploadSuccessResponse,
+  TeacherProfileResponse,
+  TeacherClassChildrenResponse,
+  TeacherSubjectsResponse,
+  TeacherAssignmentsResponse,
 };
 
 const schemas = {
@@ -61,7 +69,7 @@ const schemas = {
   CreateSubjectRequest,
   AssignTeacherRequest,
   CreateLessonGuideRequest,
-  RegisterParentRequest
+  RegisterParentRequest,
 };
 const refreshParam = {
   name: 'token',

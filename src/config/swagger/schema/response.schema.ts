@@ -530,22 +530,339 @@ export const ParentUploadSuccessResponse = {
                           id: {
                             type: 'string',
                             format: 'uuid',
-                            example:
-                              '38fb905a-c46b-41d7-af39-a9e255e45971',
+                            example: '38fb905a-c46b-41d7-af39-a9e255e45971',
                           },
 
                           parentId: {
                             type: 'string',
                             format: 'uuid',
-                            example:
-                              '1ffb6d09-2cd9-4cfe-acf4-3c863723c57f',
+                            example: '1ffb6d09-2cd9-4cfe-acf4-3c863723c57f',
                           },
 
                           childId: {
                             type: 'string',
                             format: 'uuid',
-                            example:
-                              'b036016c-5790-4bd6-bbd2-284423dab695',
+                            example: 'b036016c-5790-4bd6-bbd2-284423dab695',
+                          },
+                        },
+                      },
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+  },
+};
+export const TeacherProfileResponse = {
+  description: 'Teacher profile fetched successfully',
+  content: {
+    'application/json': {
+      schema: {
+        type: 'object',
+        properties: {
+          success: {
+            type: 'boolean',
+            example: true,
+          },
+          message: {
+            type: 'string',
+            example: 'Success',
+          },
+          data: {
+            type: 'object',
+            properties: {
+              id: {
+                type: 'string',
+                format: 'uuid',
+                example: 'e9b7f0c4-7943-4edd-b91d-44f86d8c82cc',
+              },
+              name: {
+                type: 'string',
+                example: 'Are Oluwa',
+              },
+              email: {
+                type: 'string',
+                format: 'email',
+                example: 'okibeonmeje5@gmail.com',
+              },
+              teacherProfile: {
+                type: 'object',
+                properties: {
+                  id: {
+                    type: 'string',
+                    format: 'uuid',
+                    example: '61beb240-8cf7-40e9-b614-a9d8b28bdaef',
+                  },
+                  schoolId: {
+                    type: 'string',
+                    format: 'uuid',
+                    example: '1fe75920-8ee6-490d-8e9e-15cc8311b6d2',
+                  },
+                  teachingAssignments: {
+                    type: 'array',
+                    items: {
+                      type: 'object',
+                      properties: {
+                        class: {
+                          type: 'object',
+                          properties: {
+                            id: {
+                              type: 'string',
+                              format: 'uuid',
+                              example: 'b47bca1c-0819-4873-84b2-4f754ff3f168',
+                            },
+                            name: {
+                              type: 'string',
+                              example: 'primary 2',
+                            },
+                            yearGroup: {
+                              type: 'number',
+                              example: 5,
+                            },
+                          },
+                        },
+                        subject: {
+                          type: 'object',
+                          properties: {
+                            id: {
+                              type: 'string',
+                              format: 'uuid',
+                              example: '73be4eee-4658-40d0-96c4-dd7dba4fe52a',
+                            },
+                            name: {
+                              type: 'string',
+                              example: 'civic education',
+                            },
+                            lessonGuides: {
+                              type: 'array',
+                              items: {
+                                type: 'object',
+                                properties: {
+                                  id: {
+                                    type: 'string',
+                                    format: 'uuid',
+                                    example:
+                                      '9f1bb818-5b7d-4dc9-ada2-9f0296280e0d',
+                                  },
+                                  learningContent: {
+                                    type: 'string',
+                                    example:
+                                      'upload/file-1778520735349-386025069.jpeg',
+                                  },
+                                  learningObjectives: {
+                                    type: 'string',
+                                    example:
+                                      'Students should understand basic algebraic expressions.',
+                                  },
+                                  topic: {
+                                    type: 'string',
+                                    example: 'Introduction to Algebra',
+                                  },
+                                  week: {
+                                    type: 'number',
+                                    example: 3,
+                                  },
+                                  status: {
+                                    type: 'string',
+                                    enum: ['DRAFT', 'ARCHIVED', 'PUBLISHED'],
+                                    example: 'DRAFT',
+                                  },
+                                  engagements: {
+                                    type: 'array',
+                                    items: {
+                                      type: 'object',
+                                    },
+                                    example: [],
+                                  },
+                                },
+                              },
+                            },
+                          },
+                        },
+                      },
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+  },
+};
+export const TeacherAssignmentsResponse = {
+  description: 'Teacher class fetched successfully',
+  content: {
+    'application/json': {
+      schema: {
+        type: 'object',
+        properties: {
+          success: {
+            type: 'boolean',
+            example: true,
+          },
+          message: {
+            type: 'string',
+            example: 'Success',
+          },
+          data: {
+            type: 'object',
+            properties: {
+              teacherProfile: {
+                type: 'object',
+                properties: {
+                  teachingAssignments: {
+                    type: 'array',
+                    items: {
+                      type: 'object',
+                      properties: {
+                        class: {
+                          type: 'object',
+                          properties: {
+                            id: {
+                              type: 'string',
+                              format: 'uuid',
+                              example: 'b47bca1c-0819-4873-84b2-4f754ff3f168',
+                            },
+                            name: {
+                              type: 'string',
+                              example: 'primary 2',
+                            },
+                            yearGroup: {
+                              type: 'number',
+                              example: 5,
+                            },
+                          },
+                        },
+                        subject: {
+                          type: 'object',
+                          properties: {
+                            name: {
+                              type: 'string',
+                              example: 'Health Education',
+                            },
+                          },
+                        },
+                      },
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+  },
+};
+export const TeacherSubjectsResponse = {
+  description: 'Teacher subjects fetched successfully',
+  content: {
+    'application/json': {
+      schema: {
+        type: 'object',
+        properties: {
+          success: {
+            type: 'boolean',
+            example: true,
+          },
+          message: {
+            type: 'string',
+            example: 'Success',
+          },
+          data: {
+            type: 'object',
+            properties: {
+              teacherProfile: {
+                type: 'object',
+                properties: {
+                  teachingAssignments: {
+                    type: 'array',
+                    items: {
+                      type: 'object',
+                      properties: {
+                        subject: {
+                          type: 'object',
+                          properties: {
+                            id: {
+                              type: 'string',
+                              format: 'uuid',
+                              example: '53daab7b-8cb9-4578-9976-ffb63849d422',
+                            },
+                            name: {
+                              type: 'string',
+                              example: 'Health Education',
+                            },
+                          },
+                        },
+                      },
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+  },
+};
+export const TeacherClassChildrenResponse = {
+  description: 'Teacher class children fetched successfully',
+  content: {
+    'application/json': {
+      schema: {
+        type: 'object',
+        properties: {
+          success: {
+            type: 'boolean',
+            example: true,
+          },
+          message: {
+            type: 'string',
+            example: 'Success',
+          },
+          data: {
+            type: 'object',
+            properties: {
+              teacherProfile: {
+                type: 'object',
+                properties: {
+                  teachingAssignments: {
+                    type: 'array',
+                    items: {
+                      type: 'object',
+                      properties: {
+                        class: {
+                          type: 'object',
+                          properties: {
+                            name: {
+                              type: 'string',
+                              example: 'primary 2',
+                            },
+                            children: {
+                              type: 'array',
+                              items: {
+                                type: 'object',
+                                properties: {
+                                  id: {
+                                    type: 'string',
+                                    format: 'uuid',
+                                    example:
+                                      '7e5c45e6-deb2-46cd-920f-cc48540e6501',
+                                  },
+                                  name: {
+                                    type: 'string',
+                                    example: 'andrew Doe',
+                                  },
+                                },
+                              },
+                            },
                           },
                         },
                       },
