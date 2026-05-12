@@ -9,9 +9,23 @@ import { prisma } from '../../config/database.js';
 export class UserService {
   constructor(private readonly prismaDBClient: PrismaClient) {}
 
-  async findByEmail(email: string): Promise<User | null> {
+  async findByEmail(email: string) {
     return await this.prismaDBClient.user.findUnique({
       where: { email },
+      select: {
+        email: true,
+        id: true,
+        name: true,
+        password: true,
+        createdAt: true,
+        updateAt: true,
+        role: {
+          select: {
+            id: true,
+            name: true,
+          },
+        },
+      },
     });
   }
   async findById(id: string): Promise<User | null> {
