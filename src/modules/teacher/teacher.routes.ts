@@ -163,4 +163,57 @@ router.get(
   teacherController.fetchLearners
 );
 
+/**
+ * @swagger
+ * /api/v1/teacher/lesson-guide:
+ *   get:
+ *     summary: Teacher Lession guides.
+ *     tags:
+ *       - Teacher
+ *     responses:
+ *       201:
+ *         description: Successfully fetched the lesson guides
+ *       400:
+ *         description: Validation error
+ *       500:
+ *         description: Internal server error
+ */
+router.get(
+  '/teacher/lesson-guide',
+  authGuard,
+  roleGuard('TEACHER'),
+  teacherController.fetchLessonGuide
+);
+
+/**
+ * @swagger
+ * /api/v1/teacher/lesson-guide-id :
+ *   get:
+ *     summary: Fetch lesson guide by ID.
+ *     tags:
+ *       - Teacher
+ *     parameters:
+ *      - in: query
+ *        name: id
+ *        required: true
+ *        schema:
+ *          type: string
+ *          format: uuid
+ *          description: The lesson guide ID
+ *          example: 16514a0a-5928-461a-813c-825ca0c6c0f1
+ *     responses:
+ *       201:
+ *         description: Successfully fetched the lesson guide
+ *       400:
+ *         description: Validation error
+ *       500:
+ *         description: Internal server error
+ */
+router.get(
+  '/teacher/lesson-guide-id',
+  authGuard,
+  roleGuard('TEACHER'),
+  teacherController.fetchLessonById
+);
+
 export default router;

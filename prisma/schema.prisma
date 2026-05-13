@@ -213,6 +213,7 @@ model Subject {
   updatedAt           DateTime             @updatedAt
 
   @@unique([name, classId])
+  @@unique([id, classId])
 }
 
 model TeachingAssignment {
