@@ -52,6 +52,24 @@ export class TeacherController {
       return next(error);
     }
   }
+  async fetchLessonGuide(req: Request, res: Response, next: NextFunction) {
+    try {
+      const userId = req.user?.id!;
+      const result = await teacherService.fetchLessionGuide(userId);
+      return sendSuccess(res, 200, 'Success', result);
+    } catch (error: any) {
+      return next(error);
+    }
+  }
+  async fetchLessonById(req: Request, res: Response, next: NextFunction) {
+    try {
+      const parsedQuery = await z.parseAsync(z.object({id: z.uuid()}), req.query)
+      const result = await teacherService.getLessionById(parsedQuery.id);
+      return sendSuccess(res, 200, 'Success', result);
+    } catch (error: any) {
+      return next(error);
+    }
+  }
   async fetchLearners(req: Request, res: Response, next: NextFunction) {
     try {
       const userId = req.user?.id!;

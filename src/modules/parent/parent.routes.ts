@@ -1,10 +1,10 @@
-import { Router } from 'express';
-import { authGuard } from '../../common/middleware/authguard.middleware.js';
-import teacherController from './teacher.controller.js';
-import { upload } from '../../common/middleware/upload.middleware.js';
-import { roleGuard } from '../../common/middleware/roleguard.middleware.js';
+// // import { Router } from 'express';
+// import { authGuard } from '../../common/middleware/authguard.middleware.js';
+// import teacherController from './parent.controller.js';
+// import { upload } from '../../common/middleware/upload.middleware.js';
+// import { roleGuard } from '../../common/middleware/roleguard.middleware.js';
 
-const router = Router();
+// const router = Router();
 
 /**
  * @swagger
@@ -26,12 +26,12 @@ const router = Router();
  *       401:
  *         $ref: '#/components/responses/UnauthorizedResponse'
  */
-router.get(
-  '/teacher',
-  authGuard,
-  roleGuard('TEACHER'),
-  teacherController.fetchTeacher
-);
+// router.get(
+//   '/teacher',
+//   authGuard,
+//   roleGuard('TEACHER'),
+//   teacherController.fetchTeacher
+// );
 
 /**
  * @swagger
@@ -53,12 +53,12 @@ router.get(
  *       401:
  *         $ref: '#/components/responses/UnauthorizedResponse'
  */
-router.get(
-  '/teacher/class',
-  authGuard,
-  roleGuard('TEACHER'),
-  teacherController.fetchTeacherClass
-);
+// router.get(
+//   '/teacher/class',
+//   authGuard,
+//   roleGuard('TEACHER'),
+//   teacherController.fetchTeacherClass
+// );
 
 /**
  * @swagger
@@ -80,12 +80,12 @@ router.get(
  *       401:
  *         $ref: '#/components/responses/UnauthorizedResponse'
  */
-router.get(
-  '/teacher/subject',
-  authGuard,
-  roleGuard('TEACHER'),
-  teacherController.fetchTeacherSubject
-);
+// router.get(
+//   '/teacher/subject',
+//   authGuard,
+//   roleGuard('TEACHER'),
+//   teacherController.fetchTeacherSubject
+// );
 
 /**
  * @swagger
@@ -109,12 +109,12 @@ router.get(
  *       400:
  *         description: Request failed
  */
-router.get(
-  '/teacher/learning-content',
-  authGuard,
-  roleGuard('TEACHER'),
-  teacherController.fetchLearningContent
-);
+// router.get(
+//   '/teacher/learning-content',
+//   authGuard,
+//   roleGuard('TEACHER'),
+//   teacherController.fetchLearningContent
+// );
 
 /**
  * @swagger
@@ -133,13 +133,13 @@ router.get(
  *       500:
  *         description: Internal server error
  */
-router.post(
-  '/teacher/lession-guide',
-  authGuard,
-  roleGuard('TEACHER'),
-  upload.single('file'),
-  teacherController.createLessonGuide
-);
+// router.post(
+//   '/teacher/lession-guide',
+//   authGuard,
+//   roleGuard('TEACHER'),
+//   upload.single('file'),
+//   teacherController.createLessonGuide
+// );
 
 /**
  * @swagger
@@ -156,64 +156,11 @@ router.post(
  *       500:
  *         description: Internal server error
  */
-router.get(
-  '/teacher/learner',
-  authGuard,
-  roleGuard('TEACHER'),
-  teacherController.fetchLearners
-);
+// router.get(
+//   '/teacher/learner',
+//   authGuard,
+//   roleGuard('TEACHER'),
+//   teacherController.fetchLearners
+// );
 
-/**
- * @swagger
- * /api/v1/teacher/lesson-guide:
- *   get:
- *     summary: Teacher Lession guides.
- *     tags:
- *       - Teacher
- *     responses:
- *       201:
- *         description: Successfully fetched the lesson guides
- *       400:
- *         description: Validation error
- *       500:
- *         description: Internal server error
- */
-router.get(
-  '/teacher/lesson-guide',
-  authGuard,
-  roleGuard('TEACHER'),
-  teacherController.fetchLessonGuide
-);
-
-/**
- * @swagger
- * /api/v1/teacher/lesson-guide-id :
- *   get:
- *     summary: Fetch lesson guide by ID.
- *     tags:
- *       - Teacher
- *     parameters:
- *      - in: query
- *        name: id
- *        required: true
- *        schema:
- *          type: string
- *          format: uuid
- *          description: The lesson guide ID
- *          example: 16514a0a-5928-461a-813c-825ca0c6c0f1
- *     responses:
- *       201:
- *         description: Successfully fetched the lesson guide
- *       400:
- *         description: Validation error
- *       500:
- *         description: Internal server error
- */
-router.get(
-  '/teacher/lesson-guide-id',
-  authGuard,
-  roleGuard('TEACHER'),
-  teacherController.fetchLessonById
-);
-
-export default router;
+// export default router;

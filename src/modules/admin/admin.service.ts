@@ -152,7 +152,11 @@ class AdminService {
         data: {
           teacher: { connect: { id: teacherProfile.id } },
           class: { connect: { id: data.classId } },
-          subject: { connect: { id: data.subjectId } },
+          subject: {
+            connect: {
+              id_classId: { id: data.subjectId, classId: data.classId },
+            },
+          },
         },
       });
     return teacherAssignment;

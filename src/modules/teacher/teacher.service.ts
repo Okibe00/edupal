@@ -1,4 +1,4 @@
-import { PrismaClient } from '../../../generated/prisma/client.js';
+import { PrismaClient, LessonGuide } from '../../../generated/prisma/client.js';
 import emailService, {
   EmailService,
 } from '../../common/service/email.service.js';
@@ -133,14 +133,23 @@ export class TeacherService {
   async fetchLessionGuide(userId: string) {
     return this.prismaDbClient.user.findFirst({
       where: { id: userId },
-      include: {
+      select: {
         teacherProfile: {
-          include: {
+          select: {
             teachingAssignments: {
-              include: { subject: { include: { lessonGuides: true } } },
+              select: {
+                subject: { select: { name: true, lessonGuides: true } },
+              },
             },
           },
         },
+      },
+    });
+  }
+  async getLessionById(lessionId: string): Promise<LessonGuide | null> {
+    return await this.prismaDbClient.lessonGuide.findUnique({
+      where: {
+        id: lessionId,
       },
     });
   }
