@@ -1,22 +1,21 @@
-// // import { Router } from 'express';
-// import { authGuard } from '../../common/middleware/authguard.middleware.js';
-// import teacherController from './parent.controller.js';
-// import { upload } from '../../common/middleware/upload.middleware.js';
-// import { roleGuard } from '../../common/middleware/roleguard.middleware.js';
+import { Router } from 'express';
+import { authGuard } from '../../common/middleware/authguard.middleware.js';
+import parentController from './parent.controller.js';
+import { roleGuard } from '../../common/middleware/roleguard.middleware.js';
 
-// const router = Router();
+const router = Router();
 
 /**
  * @swagger
- * /api/v1/teacher:
+ * /api/v1/parent:
  *   get:
- *     summary: Fetch a teacher
- *     description: Fetch a teacher with all related records.
+ *     summary: Fetch a parent
+ *     description: Fetch a parent with all children.
  *     tags:
- *       - Teacher
+ *       - Parent
  *     responses:
  *       200:
- *         $ref: '#/components/responses/TeacherProfileResponse'
+ *         description: success
  *       404:
  *         $ref: '#/components/responses/NotFoundErrorResponse'
  *       400:
@@ -26,141 +25,46 @@
  *       401:
  *         $ref: '#/components/responses/UnauthorizedResponse'
  */
-// router.get(
-//   '/teacher',
-//   authGuard,
-//   roleGuard('TEACHER'),
-//   teacherController.fetchTeacher
-// );
+router.get(
+  '/parent',
+  authGuard,
+  roleGuard('PARENT'),
+  parentController.fetchParent
+);
 
 /**
  * @swagger
- * /api/v1/teacher/class:
+ * /api/v1/parent/child/lesson-guide:
  *   get:
- *     summary: Fetch a teachers class
- *     description: Fetch a teachers class with subject.
+ *     summary: Fetch lesson guides for a child
+ *     description: Retrieve lesson guides and learning activities assigned to a specific child.
  *     tags:
- *       - Teacher
- *     responses:
- *       200:
- *         $ref: '#/components/responses/TeacherAssignmentsResponse'
- *       404:
- *         $ref: '#/components/responses/NotFoundErrorResponse'
- *       400:
- *         $ref: '#/components/responses/ValidationErrorResponse'
- *       500:
- *         $ref: '#/components/responses/GenericErrorResponse'
- *       401:
- *         $ref: '#/components/responses/UnauthorizedResponse'
- */
-// router.get(
-//   '/teacher/class',
-//   authGuard,
-//   roleGuard('TEACHER'),
-//   teacherController.fetchTeacherClass
-// );
-
-/**
- * @swagger
- * /api/v1/teacher/subject:
- *   get:
- *     summary: Fetch a teachers subject.
- *     description: Fetch a teachers subject.
- *     tags:
- *       - Teacher
- *     responses:
- *       200:
- *         $ref: '#/components/responses/TeacherSubjectsResponse'
- *       404:
- *         $ref: '#/components/responses/NotFoundErrorResponse'
- *       400:
- *         $ref: '#/components/responses/ValidationErrorResponse'
- *       500:
- *         $ref: '#/components/responses/GenericErrorResponse'
- *       401:
- *         $ref: '#/components/responses/UnauthorizedResponse'
- */
-// router.get(
-//   '/teacher/subject',
-//   authGuard,
-//   roleGuard('TEACHER'),
-//   teacherController.fetchTeacherSubject
-// );
-
-/**
- * @swagger
- * /api/v1/teacher/learning-content:
- *   get:
- *     summary: Fetch uploaded learning content.
- *     description: Fetch learning content on host disk.
- *     tags:
- *       - Teacher
+ *       - Parent
  *     parameters:
  *       - in: query
- *         name: url
+ *         name: childId
  *         required: true
  *         schema:
  *           type: string
- *         description: location of file on disk.
- *         example: '/upload/noun.pdf'
+ *           format: uuid
+ *         example: 8be4df61-93ca-11d2-aa0d-00e098032b8c
+ *         description: Unique identifier of the child.
  *     responses:
  *       200:
- *         description: successful!
+ *         $ref: '#/components/responses/ParentChildLessonGuideResponse'
  *       400:
- *         description: Request failed
- */
-// router.get(
-//   '/teacher/learning-content',
-//   authGuard,
-//   roleGuard('TEACHER'),
-//   teacherController.fetchLearningContent
-// );
-
-/**
- * @swagger
- * /api/v1/teacher/lession-guide:
- *   post:
- *     summary: Create a lesson guide
- *     tags:
- *       - Teacher
- *     requestBody:
- *       $ref: '#/components/schemas/CreateLessonGuideRequest'
- *     responses:
- *       201:
- *         description: Lesson guide created successfully
- *       400:
- *         description: Validation error
+ *         $ref: '#/components/responses/ValidationErrorResponse'
+ *       401:
+ *         $ref: '#/components/responses/UnauthorizedResponse'
+ *       404:
+ *         $ref: '#/components/responses/NotFoundErrorResponse'
  *       500:
- *         description: Internal server error
+ *         $ref: '#/components/responses/GenericErrorResponse'
  */
-// router.post(
-//   '/teacher/lession-guide',
-//   authGuard,
-//   roleGuard('TEACHER'),
-//   upload.single('file'),
-//   teacherController.createLessonGuide
-// );
-
-/**
- * @swagger
- * /api/v1/teacher/learner:
- *   get:
- *     summary: Learners in a class.
- *     tags:
- *       - Teacher
- *     responses:
- *       201:
- *         $ref: '#/components/responses/TeacherClassChildrenResponse'
- *       400:
- *         description: Validation error
- *       500:
- *         description: Internal server error
- */
-// router.get(
-//   '/teacher/learner',
-//   authGuard,
-//   roleGuard('TEACHER'),
-//   teacherController.fetchLearners
-// );
-
-// export default router;
+router.get(
+  '/parent/child/lesson-guide',
+  authGuard,
+  roleGuard('PARENT'),
+  parentController.fetchChildLessonGuides
+);
+export default router;

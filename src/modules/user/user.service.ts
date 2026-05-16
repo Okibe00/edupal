@@ -9,13 +9,24 @@ import { prisma } from '../../config/database.js';
 export class UserService {
   constructor(private readonly prismaDBClient: PrismaClient) {}
 
-  async findByEmail(email: string): Promise<User | null> {
+  async findByEmail(email: string) {
     return await this.prismaDBClient.user.findUnique({
       where: { email },
+      include: {
+        role: {
+          select: {
+            id: true,
+            name: true,
+          },
+        },
+      },
     });
   }
-  async findById(id: string): Promise<User | null> {
-    return await this.prismaDBClient.user.findUnique({ where: { id } });
+  async findById(id: string) {
+    return await this.prismaDBClient.user.findUnique({
+      where: { id },
+      include: { role: { select: { id: true, name: true } } },
+    });
   }
   async fetchRole(userId: string) {
     return await this.prismaDBClient.user.findUnique({

@@ -17,6 +17,7 @@ import {
   ParentRecordSchema,
 } from './schema/parentRecord.schema.js';
 import { FetchAllSchema } from './schema/fetchAll.schema.js';
+import { SchoolStateSchema } from './schema/schoolState.schema.js';
 
 export class AdminController {
   async signup(req: Request, res: Response, next: NextFunction) {
@@ -145,6 +146,16 @@ export class AdminController {
         body
       );
       const result = await adminService.deleteUser(email);
+      return sendSuccess(res, 200, 'Success', result);
+    } catch (error: any) {
+      return next(error);
+    }
+  }
+  async schoolState(req: Request, res: Response, next: NextFunction) {
+    try {
+      const schoolId = req.schoolId!;
+      const parsedData = await z.parseAsync(SchoolStateSchema, req.body);
+      const result = await adminService.createSchoolState(schoolId, parsedData);
       return sendSuccess(res, 200, 'Success', result);
     } catch (error: any) {
       return next(error);

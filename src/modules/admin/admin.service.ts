@@ -9,6 +9,7 @@ import {
   School,
   User,
   Subject,
+  SchoolState,
 } from '../../../generated/prisma/client.js';
 import { createAdminType } from './schema/adminSignup.schema.js';
 import { TeachingAssignment } from '../../../generated/prisma/browser.js';
@@ -19,6 +20,7 @@ import { teachingAssignmentType } from './schema/teachingAssignment.schema.js';
 import { createSubjectType } from './schema/createSubject.schema.js';
 import { GroupedRecord } from '../../common/utils/groupParent.js';
 import userService from '../user/user.service.js';
+import { SchoolStateSchemaType } from './schema/schoolState.schema.js';
 
 class AdminService {
   constructor(
@@ -416,6 +418,17 @@ class AdminService {
   }
   async deleteUser(email: string): Promise<User> {
     return await userService.delete(email);
+  }
+
+  async createSchoolState(
+    schoolId: string,
+    data: SchoolStateSchemaType
+  ): Promise<SchoolState> {
+    return await this.prismaDBClient.schoolState.upsert({
+      where: { schoolId },
+      update: { ...data, schoolId },
+      create: { ...data, schoolId },
+    });
   }
 }
 
