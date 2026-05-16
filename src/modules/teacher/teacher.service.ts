@@ -1,7 +1,12 @@
-import { PrismaClient, LessonGuide } from '../../../generated/prisma/client.js';
+import {
+  PrismaClient,
+  LessonGuide,
+  LessonAttachment,
+} from '../../../generated/prisma/client.js';
 import emailService, {
   EmailService,
 } from '../../common/service/email.service.js';
+import { AppError } from '../../common/utils/customError.js';
 import { prisma } from '../../config/database.js';
 import userService, { UserService } from '../user/user.service.js';
 import { LearningContentType } from './schema/learningContent.schema.js';
@@ -118,7 +123,26 @@ export class TeacherService {
     });
   }
 
-  async createLessionGuide(data: LearningContentType, filePath: string) {
+  async createLessonGuide(data: LearningContentType, userId: string) {
+    const teacherAssignment = await this.prismaDbClient.user.findUnique({
+      where: { id: userId },
+      select: {
+        teacherProfile: {
+          select: {
+            teachingAssignments: {
+              where: { subjectId: data.subjectId },
+            },
+          },
+        },
+      },
+    });
+    if (teacherAssignment?.teacherProfile?.teachingAssignments.length === 0) {
+      throw new AppError(
+        'The subject is not assigned to this teacher or does not exist contact school admin',
+        400,
+        'NONSTD_TEACHER_NOT_ASSIGNED_SUBJECT'
+      );
+    }
     return this.prismaDbClient.lessonGuide.upsert({
       where: {
         subjectId_week: {
@@ -127,7 +151,22 @@ export class TeacherService {
         },
       },
       update: {},
-      create: { ...data, learningContent: filePath },
+      create: { ...data },
+    });
+  }
+  async createLessonAttachment(
+    lessonId: string,
+    attachmentUrl: string
+  ): Promise<LessonAttachment> {
+    return await this.prismaDbClient.lessonAttachment.create({
+      data: {
+        url: attachmentUrl,
+        LessonGuide: {
+          connect: {
+            id: lessonId,
+          },
+        },
+      },
     });
   }
   async fetchLessionGuide(userId: string) {
@@ -138,7 +177,12 @@ export class TeacherService {
           select: {
             teachingAssignments: {
               select: {
-                subject: { select: { name: true, lessonGuides: true } },
+                subject: {
+                  select: {
+                    name: true,
+                    lessonGuides: { include: { attachments: true } },
+                  },
+                },
               },
             },
           },
@@ -150,6 +194,9 @@ export class TeacherService {
     return await this.prismaDbClient.lessonGuide.findUnique({
       where: {
         id: lessionId,
+      },
+      include: {
+        attachments: true,
       },
     });
   }

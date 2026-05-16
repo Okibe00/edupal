@@ -11,6 +11,7 @@ import { createTeacherSchema } from './schema/createTeacher.schema.js';
 import { schoolGuard } from '../../common/middleware/schoolguard.middleware.js';
 import { teachingAssignmentSchema } from './schema/teachingAssignment.schema.js';
 import { upload } from '../../common/middleware/upload.middleware.js';
+import { SchoolStateSchema } from './schema/schoolState.schema.js';
 
 const route = Router();
 
@@ -352,6 +353,48 @@ route.delete(
   roleGuard('SCHOOL_ADMIN'),
   schoolGuard,
   adminController.delete
+);
+
+/**
+ * @swagger
+ * /api/v1/admin/school-state:
+ *   post:
+ *     summary: Create or updates a school state.
+ *     tags:
+ *       - Admin
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - week
+ *               - term
+ *             properties:
+ *               week:
+ *                 type: number
+ *                 descripton: 'The school week'
+ *                 example: 1
+ *               term:
+ *                 type: string
+ *                 descripton: 'The school term'
+ *                 example: First Term
+ *     responses:
+ *       200:
+ *         description: successful!
+ *       400:
+ *         description: Bad request
+ *       500:
+ *         description: Internal  Server Error
+ */
+route.post(
+  '/admin/school-state',
+  authGuard,
+  roleGuard('SCHOOL_ADMIN'),
+  schoolGuard,
+  validateRequestData(SchoolStateSchema, 'body'),
+  adminController.schoolState
 );
 
 export default route;

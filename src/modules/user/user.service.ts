@@ -12,13 +12,7 @@ export class UserService {
   async findByEmail(email: string) {
     return await this.prismaDBClient.user.findUnique({
       where: { email },
-      select: {
-        email: true,
-        id: true,
-        name: true,
-        password: true,
-        createdAt: true,
-        updateAt: true,
+      include: {
         role: {
           select: {
             id: true,
@@ -28,8 +22,11 @@ export class UserService {
       },
     });
   }
-  async findById(id: string): Promise<User | null> {
-    return await this.prismaDBClient.user.findUnique({ where: { id } });
+  async findById(id: string) {
+    return await this.prismaDBClient.user.findUnique({
+      where: { id },
+      include: { role: { select: { id: true, name: true } } },
+    });
   }
   async fetchRole(userId: string) {
     return await this.prismaDBClient.user.findUnique({

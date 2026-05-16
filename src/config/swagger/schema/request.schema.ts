@@ -103,7 +103,7 @@ export const CreateLessonGuideRequest = {
   description: 'Create lesson guide request body',
   required: true,
   content: {
-    'multipart/form-data': {
+    'application/json': {
       schema: {
         type: 'object',
         required: ['status', 'week', 'subjectId', 'topic'],
@@ -135,11 +135,35 @@ export const CreateLessonGuideRequest = {
             example:
               'Algebra is a branch of mathematics dealing with symbols and rules for manipulating those symbols.',
           },
+          // file: {
+          //   type: 'string',
+          //   format: 'binary',
+          //   description:
+          //     'Upload lesson guide attachment (PDF, image, audio, etc.)',
+          // },
+        },
+      },
+    },
+  },
+};
+export const CreateLessonAttachmentRequest = {
+  description: 'Upload lesson guide attachment request body',
+  required: true,
+  content: {
+    'multipart/form-data': {
+      schema: {
+        type: 'object',
+        required: ['lessonId', 'file'],
+        properties: {
+          lessonId: {
+            type: 'string',
+            format: 'uuid',
+            example: '550e8400-e29b-41d4-a716-446655440000',
+          },
           file: {
             type: 'string',
             format: 'binary',
-            description:
-              'Upload lesson guide attachment (PDF, image, audio, etc.)',
+            description: 'Upload lesson guide attachment (image - Max 50MB)',
           },
         },
       },

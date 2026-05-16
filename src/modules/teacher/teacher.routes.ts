@@ -118,7 +118,7 @@ router.get(
 
 /**
  * @swagger
- * /api/v1/teacher/lession-guide:
+ * /api/v1/teacher/lesson-guide:
  *   post:
  *     summary: Create a lesson guide
  *     tags:
@@ -134,11 +134,36 @@ router.get(
  *         description: Internal server error
  */
 router.post(
-  '/teacher/lession-guide',
+  '/teacher/lesson-guide',
+  authGuard,
+  roleGuard('TEACHER'),
+  teacherController.createLessonGuide
+);
+
+/**
+ * @swagger
+ * /api/v1/teacher/lesson-guide-attachment:
+ *   post:
+ *     summary: Upload a lesson guide attachment
+ *     tags:
+ *       - Teacher
+ *     requestBody:
+ *       $ref: '#/components/schemas/CreateLessonAttachmentRequest'
+ *     responses:
+ *       201:
+ *         description: Lesson guide created successfully
+ *       400:
+ *         description: Validation error
+ *       500:
+ *         description: Internal server error
+ */
+
+router.post(
+  '/teacher/lesson-guide-attachment',
   authGuard,
   roleGuard('TEACHER'),
   upload.single('file'),
-  teacherController.createLessonGuide
+  teacherController.createLessonAttachment
 );
 
 /**

@@ -25,6 +25,7 @@ import {
   CreateSubjectRequest,
   CreateLessonGuideRequest,
   RegisterParentRequest,
+  CreateLessonAttachmentRequest,
 } from './schema/request.schema.js';
 
 const responses = {
@@ -70,6 +71,7 @@ const schemas = {
   AssignTeacherRequest,
   CreateLessonGuideRequest,
   RegisterParentRequest,
+  CreateLessonAttachmentRequest,
 };
 const refreshParam = {
   name: 'token',
@@ -109,7 +111,11 @@ const options: Options = {
       },
     ],
   },
-  apis: ['dist/src/modules/**/*.routes.js', '../modules/**/*.routes.ts'],
+  apis: [
+    'dist/src/modules/**/*.routes.js',
+    '../modules/**/*.routes.ts',
+    'src/modules/**/*.routes.ts',
+  ],
 };
 
 const swaggerSpec = swaggerJsdoc(options);

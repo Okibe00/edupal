@@ -6,6 +6,7 @@ import swaggerSpec from './config/swagger/swagger.js';
 import authRoute from './modules/auth/auth.routes.js';
 import adminRoute from './modules/admin/admin.routes.js';
 import teacherRoute from './modules/teacher/teacher.routes.js';
+import parentRoute from './modules/parent/parent.routes.js';
 import helmet from 'helmet';
 const app = express();
 
@@ -40,6 +41,7 @@ app.get('/', async (req: Request, res: Response, next: NextFunction) => {
 app.use('/api/v1', authRoute);
 app.use('/api/v1', adminRoute);
 app.use('/api/v1', teacherRoute);
+app.use('/api/v1', parentRoute);
 
 /**
  * CATCH ALL ROUTES

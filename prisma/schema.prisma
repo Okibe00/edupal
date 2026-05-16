@@ -164,23 +164,34 @@ model ParentChildLink {
 // ================= SCHOOL ORGANIZATION =================
 
 model School {
-  id         String           @id @default(uuid())
-  name       String
-  subdomain  String?          @unique
-  logo       String?
-  brandColor String?
-  type       String?
-  street     String?
-  city       String?
-  tel        String?
-  state      String?
-  createdAt  DateTime         @default(now())
-  updatedAt  DateTime         @updatedAt
-  parents    ParentProfile[]
-  admins     AdminProfile[]
-  teachers   TeacherProfile[]
-  classes    Class[]
-  children   Child[]
+  id          String           @id @default(uuid())
+  name        String
+  subdomain   String?          @unique
+  logo        String?
+  brandColor  String?
+  type        String?
+  street      String?
+  city        String?
+  tel         String?
+  state       String?
+  createdAt   DateTime         @default(now())
+  updatedAt   DateTime         @updatedAt
+  parents     ParentProfile[]
+  admins      AdminProfile[]
+  teachers    TeacherProfile[]
+  classes     Class[]
+  children    Child[]
+  schoolState SchoolState?
+}
+
+model SchoolState {
+  id        String   @id @default(uuid())
+  term      String
+  week      Int
+  createAt  DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  schoolId  String   @unique
+  school    School   @relation(fields: [schoolId], references: [id], onDelete: Cascade)
 }
 
 model Class {
@@ -243,14 +254,21 @@ model LessonGuide {
   status             DocumentStatus @default(DRAFT)
   learningContent    String // Consider String[] if using PostgreSQL
 
-  subjectId String
-  subject   Subject @relation(fields: [subjectId], references: [id], onDelete: Cascade)
-
+  subjectId   String
+  subject     Subject            @relation(fields: [subjectId], references: [id], onDelete: Cascade)
+  attachments LessonAttachment[]
   engagements LessonEngagement[]
   createdAt   DateTime           @default(now())
   updatedAt   DateTime           @updatedAt
 
   @@unique([subjectId, week])
+}
+
+model LessonAttachment {
+  id          String      @id @default(uuid())
+  url         String
+  lessonId    String
+  LessonGuide LessonGuide @relation(fields: [lessonId], references: [id], onDelete: Cascade)
 }
 
 enum DocumentStatus {
