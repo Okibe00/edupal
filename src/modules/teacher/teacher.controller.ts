@@ -34,10 +34,32 @@ export class TeacherController {
 
   async createLessonGuide(req: Request, res: Response, next: NextFunction) {
     try {
-      const FILEPATH = req.file?.path;
       const body = await z.parseAsync(LearningContentSchema, req.body);
+      const userId = req.user?.id;
+      const result = await teacherService.createLessonGuide(body, userId!);
+      return sendSuccess(res, 200, 'success', result);
+    } catch (error: any) {
+      return next(error);
+    }
+  }
+  async createLessonAttachment(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ) {
+    try {
+      const FILEPATH = req.file?.path;
+      const body = await z.parseAsync(
+        z.object({
+          lessonId: z.uuid(),
+        }),
+        req.body
+      );
       if (FILEPATH) {
-        const result = await teacherService.createLessionGuide(body, FILEPATH);
+        const result = await teacherService.createLessonAttachment(
+          body.lessonId,
+          FILEPATH
+        );
         return sendSuccess(res, 200, 'success', result);
       }
     } catch (error: any) {
@@ -63,7 +85,10 @@ export class TeacherController {
   }
   async fetchLessonById(req: Request, res: Response, next: NextFunction) {
     try {
-      const parsedQuery = await z.parseAsync(z.object({id: z.uuid()}), req.query)
+      const parsedQuery = await z.parseAsync(
+        z.object({ id: z.uuid() }),
+        req.query
+      );
       const result = await teacherService.getLessionById(parsedQuery.id);
       return sendSuccess(res, 200, 'Success', result);
     } catch (error: any) {

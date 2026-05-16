@@ -3,6 +3,7 @@ import { ZodError } from 'zod';
 import { Prisma } from '../../../generated/prisma/client.js';
 import { logger } from '../../config/logger.js';
 import multer from 'multer';
+import { AppError } from '../utils/customError.js';
 
 export function globalErrorHandler(
   error: any,
@@ -21,14 +22,21 @@ export function globalErrorHandler(
       })),
     });
   }
-  if (error instanceof multer.MulterError) {
-    return res
-      .status(400)
-      .json({
+  if (error instanceof AppError) {
+    if (error.code === 'NONSTD_TEACHER_NOT_ASSIGNED_SUBJECT') {
+      return res.json({
         status: 'error',
-        code: 'BAD_REQUEST',
-        message: 'File upload failed',
+        code: error.code,
+        message: error.message,
       });
+    }
+  }
+  if (error instanceof multer.MulterError) {
+    return res.status(400).json({
+      status: 'error',
+      code: 'BAD_REQUEST',
+      message: 'File upload failed',
+    });
   }
   if (error instanceof Prisma.PrismaClientKnownRequestError) {
     if (error.code === 'P2002') {
