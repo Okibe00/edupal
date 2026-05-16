@@ -118,7 +118,7 @@ router.get(
 
 /**
  * @swagger
- * /api/v1/teacher/lession-guide:
+ * /api/v1/teacher/lesson-guide:
  *   post:
  *     summary: Create a lesson guide
  *     tags:
@@ -134,7 +134,7 @@ router.get(
  *         description: Internal server error
  */
 router.post(
-  '/teacher/lession-guide',
+  '/teacher/lesson-guide',
   authGuard,
   roleGuard('TEACHER'),
   upload.single('file'),
