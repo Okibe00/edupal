@@ -27,8 +27,12 @@ export class TeacherService {
         email: true,
         teacherProfile: {
           select: {
-            id: true,
-            schoolId: true,
+            school: {
+              select: {
+                name: true,
+                id: true,
+              },
+            },
             teachingAssignments: {
               select: {
                 class: {
