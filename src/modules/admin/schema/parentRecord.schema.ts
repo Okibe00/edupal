@@ -7,7 +7,7 @@ const nonEmptyString = z
 const ParentSchema = z.object({
   name: nonEmptyString,
   phone: nonEmptyString,
-  email: nonEmptyString,
+  email: z.email(),
   password: nonEmptyString,
 });
 
@@ -19,7 +19,7 @@ const ChildSchema = z.object({
 export const parentChildSchema = z.object({
   parent_name: z.string(),
   parent_phone: z.string(),
-  parent_email: z.string(),
+  parent_email: z.email(),
   child_name: z.string(),
   child_class: z.string(),
   admission_number: z.string(),
