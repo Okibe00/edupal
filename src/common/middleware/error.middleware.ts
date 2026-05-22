@@ -1,4 +1,4 @@
-import { ErrorRequestHandler, Request, Response, NextFunction } from 'express';
+import { Request, Response, NextFunction } from 'express';
 import { ZodError } from 'zod';
 import { Prisma } from '../../../generated/prisma/client.js';
 import { logger } from '../../config/logger.js';
@@ -24,6 +24,27 @@ export function globalErrorHandler(
   }
   if (error instanceof AppError) {
     if (error.code === 'NONSTD_TEACHER_NOT_ASSIGNED_SUBJECT') {
+      return res.json({
+        status: 'error',
+        code: error.code,
+        message: error.message,
+      });
+    }
+    if (error.code === 'NONSTD_SCHOOL_STATE_NOT_FOUND') {
+      return res.json({
+        status: 'error',
+        code: error.code,
+        message: error.message,
+      });
+    }
+    if (error.code === 'NONSTD_USER_NOT_FOUND') {
+      return res.json({
+        status: 'error',
+        code: error.code,
+        message: error.message,
+      });
+    }
+    if (error.code === 'NONSTD_PARENT_PROFILE_NOT_FOUND') {
       return res.json({
         status: 'error',
         code: error.code,

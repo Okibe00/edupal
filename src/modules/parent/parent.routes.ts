@@ -51,7 +51,7 @@ router.get(
  *         description: Unique identifier of the child.
  *     responses:
  *       200:
- *         $ref: '#/components/responses/ParentChildLessonGuideResponse'
+ *         description: Leson guide retrieved successfully!
  *       400:
  *         $ref: '#/components/responses/ValidationErrorResponse'
  *       401:
@@ -66,5 +66,64 @@ router.get(
   authGuard,
   roleGuard('PARENT'),
   parentController.fetchChildLessonGuides
+);
+
+/**
+ * @swagger
+ * /api/v1/parent/streak:
+ *   get:
+ *     summary: Record patient streak
+ *     description: The route updates a users streak
+ *     tags:
+ *       - Parent
+ *     responses:
+ *       200:
+ *         description: Streak recorded.
+ *       401:
+ *         $ref: '#/components/responses/UnauthorizedResponse'
+ *       404:
+ *         $ref: '#/components/responses/NotFoundErrorResponse'
+ *       500:
+ *         $ref: '#/components/responses/GenericErrorResponse'
+ */
+router.get(
+  '/parent/streak',
+  authGuard,
+  roleGuard('PARENT'),
+  parentController.streakManagement
+);
+
+/**
+ * @swagger
+ * /api/v1/parent/point-management:
+ *   get:
+ *     summary: Record parent points
+ *     description: The route updates a parents point
+ *     tags:
+ *       - Parent
+ *     parameters:
+ *       - in: query
+ *         name: lessonId
+ *         required: true
+ *         schema:
+ *           type: string
+ *           format: uuid
+ *         example: 8be4df61-93ca-11d2-aa0d-00e098032b8c
+ *         description: Unique identifier of the lessonId.
+ *     responses:
+ *       200:
+ *         description: point recorded.
+ *       401:
+ *         $ref: '#/components/responses/UnauthorizedResponse'
+ *       404:
+ *         $ref: '#/components/responses/NotFoundErrorResponse'
+ *       500:
+ *         $ref: '#/components/responses/GenericErrorResponse'
+ */
+router.get(
+  '/parent/point-management',
+  authGuard,
+  roleGuard('PARENT'),
+  parentController.pointManagement
 );
 export default router;

@@ -20,11 +20,40 @@ export class ParentController {
   ) {
     try {
       const data = req.query;
-      const parsedData = await z.parseAsync(z.object({ childId: z.uuid() }), data);
+      const parsedData = await z.parseAsync(
+        z.object({ childId: z.uuid() }),
+        data
+      );
       const schoolId = req.schoolId!;
       const result = await parentService.fetchChildLearningActivity(
         parsedData.childId,
         schoolId
+      );
+      return sendSuccess(res, 200, 'Success', result);
+    } catch (error: any) {
+      return next(error);
+    }
+  }
+
+  async streakManagement(req: Request, res: Response, next: NextFunction) {
+    try {
+      const userId = req.user?.id;
+      const result = await parentService.streakManagement(userId!);
+      return sendSuccess(res, 200, 'Success', result);
+    } catch (error: any) {
+      return next(error);
+    }
+  }
+  async pointManagement(req: Request, res: Response, next: NextFunction) {
+    try {
+      const userId = req.user?.id;
+      const query = await z.parseAsync(
+        z.object({ lessonId: z.uuid() }),
+        req.query
+      );
+      const result = await parentService.pointManagement(
+        userId!,
+        query.lessonId
       );
       return sendSuccess(res, 200, 'Success', result);
     } catch (error: any) {
