@@ -19,35 +19,6 @@ export class AuthService {
     private readonly userService: UserService
   ) {}
 
-  // async signup(data: signUpType) {
-  //   const { email } = data;
-  //   const userExist = await this.userService.findByEmail(email);
-  //   if (userExist) {
-  //     throw new Error('NONSTD_USER_EXIST');
-  //   }
-  //   const saltRound = 10;
-  //   const hashedPassword = await bcrypt.hash(data.password, saltRound);
-  //   const newUser = { ...data, password: hashedPassword };
-  //   const createdUser = await this.prismaDBClient.user.create({
-  //     data: newUser,
-  //     select: {
-  //       id: true,
-  //       email: true,
-  //       name: true,
-  //     },
-  //   });
-
-  //   const accessToken = await this.generateAccessToken(
-  //     { id: createdUser.id, email: createdUser.email },
-  //     '15m'
-  //   );
-  //   const refreshToken = await this.generateRefreshTokenAndSave(
-  //     { id: createdUser.id, email: createdUser.email },
-  //     '7d'
-  //   );
-  //   //schedule a welcome email to be sent here
-  //   return { accessToken, createdUser, refreshToken };
-  // }
   async login(data: loginType) {
     const { email, password } = data;
     const locatedUser = await this.userService.findByEmail(email);
@@ -223,6 +194,18 @@ export class AuthService {
       }
     }
     return token;
+  }
+  async logout(userId: string) {
+    /**
+     * get the refeshToken modle and mark as revoked now that will prevent the user from logging in thanks to he middleware but what if there try to reset password? middleware should stil stop them
+     */
+    await this.prismaDBClient.refreshToken.update({
+      where: { userId },
+      data: {
+        revoked: true,
+      },
+    });
+    return 'Logged out successfully';
   }
 }
 export default new AuthService(prisma, emailService, userService);

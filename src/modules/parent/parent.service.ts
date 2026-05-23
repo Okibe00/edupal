@@ -126,6 +126,7 @@ export class ParentService {
         },
       });
       const now = new Date();
+      console.log(userStreakHx);
       if (!userStreakHx) {
         return await this.prismaDbClient.streakHistory.create({
           data: {

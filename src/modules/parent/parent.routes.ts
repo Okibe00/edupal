@@ -27,7 +27,7 @@ const router = Router();
  */
 router.get(
   '/parent',
-  authGuard,
+  // authGuard,
   roleGuard('PARENT'),
   parentController.fetchParent
 );
@@ -63,7 +63,7 @@ router.get(
  */
 router.get(
   '/parent/child/lesson-guide',
-  authGuard,
+  // authGuard,
   roleGuard('PARENT'),
   parentController.fetchChildLessonGuides
 );
@@ -88,7 +88,7 @@ router.get(
  */
 router.get(
   '/parent/streak',
-  authGuard,
+  // authGuard,
   roleGuard('PARENT'),
   parentController.streakManagement
 );
@@ -122,7 +122,7 @@ router.get(
  */
 router.get(
   '/parent/point-management',
-  authGuard,
+  // authGuard,
   roleGuard('PARENT'),
   parentController.pointManagement
 );

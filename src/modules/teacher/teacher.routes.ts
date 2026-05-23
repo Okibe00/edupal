@@ -1,5 +1,4 @@
 import { Router } from 'express';
-import { authGuard } from '../../common/middleware/authguard.middleware.js';
 import teacherController from './teacher.controller.js';
 import { upload } from '../../common/middleware/upload.middleware.js';
 import { roleGuard } from '../../common/middleware/roleguard.middleware.js';
@@ -28,7 +27,6 @@ const router = Router();
  */
 router.get(
   '/teacher',
-  authGuard,
   roleGuard('TEACHER'),
   teacherController.fetchTeacher
 );
@@ -55,7 +53,6 @@ router.get(
  */
 router.get(
   '/teacher/class',
-  authGuard,
   roleGuard('TEACHER'),
   teacherController.fetchTeacherClass
 );
@@ -82,7 +79,6 @@ router.get(
  */
 router.get(
   '/teacher/subject',
-  authGuard,
   roleGuard('TEACHER'),
   teacherController.fetchTeacherSubject
 );
@@ -111,7 +107,6 @@ router.get(
  */
 router.get(
   '/teacher/learning-content',
-  authGuard,
   roleGuard('TEACHER'),
   teacherController.fetchLearningContent
 );
@@ -135,7 +130,6 @@ router.get(
  */
 router.post(
   '/teacher/lesson-guide',
-  authGuard,
   roleGuard('TEACHER'),
   teacherController.createLessonGuide
 );
@@ -160,7 +154,6 @@ router.post(
 
 router.post(
   '/teacher/lesson-guide-attachment',
-  authGuard,
   roleGuard('TEACHER'),
   upload.single('file'),
   teacherController.createLessonAttachment
@@ -183,7 +176,6 @@ router.post(
  */
 router.get(
   '/teacher/learner',
-  authGuard,
   roleGuard('TEACHER'),
   teacherController.fetchLearners
 );
@@ -205,7 +197,6 @@ router.get(
  */
 router.get(
   '/teacher/lesson-guide',
-  authGuard,
   roleGuard('TEACHER'),
   teacherController.fetchLessonGuide
 );
@@ -236,7 +227,6 @@ router.get(
  */
 router.get(
   '/teacher/lesson-guide-id',
-  authGuard,
   roleGuard('TEACHER'),
   teacherController.fetchLessonById
 );

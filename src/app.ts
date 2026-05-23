@@ -8,6 +8,11 @@ import adminRoute from './modules/admin/admin.routes.js';
 import teacherRoute from './modules/teacher/teacher.routes.js';
 import parentRoute from './modules/parent/parent.routes.js';
 import helmet from 'helmet';
+import {
+  isValidToken,
+  unless,
+} from './common/middleware/validToken.middleware.js';
+import { authGuard } from './common/middleware/authguard.middleware.js';
 const app = express();
 
 /**
@@ -37,7 +42,8 @@ app.get('/api/v1/api-docs.json', (req, res) => {
 app.get('/', async (req: Request, res: Response, next: NextFunction) => {
   return res.redirect('/api/v1/api-docs');
 });
-
+app.use(unless(['/api/v1/auth/login'], authGuard));
+app.use(unless(['/api/v1/auth/login'], isValidToken));
 app.use('/api/v1', authRoute);
 app.use('/api/v1', adminRoute);
 app.use('/api/v1', teacherRoute);

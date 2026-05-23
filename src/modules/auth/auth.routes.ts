@@ -5,14 +5,12 @@ import {
   forgotPasswordSchema,
   loginSchema,
   resetPasswordSchema,
-  signupSchema,
 } from './dto/auth.dto.js';
-import { authGuard } from '../../common/middleware/authguard.middleware.js';
 
 const route = Router();
 
 /**
- * 
+ *
  * /api/v1/auth/signup:
  *   post:
  *     summary: Creates a user
@@ -146,5 +144,19 @@ route.post(
   validateRequestData(resetPasswordSchema, 'body'),
   authController.resetPassword
 );
+
+/**
+ * @swagger
+ * /api/v1/auth/logout:
+ *   get:
+ *     summary: logout a user password.
+ *     description: logout a user from the app.
+ *     tags:
+ *       - Auth
+ *     responses:
+ *       200:
+ *         description: Success
+ */
+route.get('/auth/logout', authController.logout);
 
 export default route;

@@ -51,6 +51,13 @@ export function globalErrorHandler(
         message: error.message,
       });
     }
+    if (error.code === 'ACCESS_DENIED') {
+      return res.json({
+        status: 'error',
+        code: error.code,
+        message: error.message,
+      });
+    }
   }
   if (error instanceof multer.MulterError) {
     return res.status(400).json({
