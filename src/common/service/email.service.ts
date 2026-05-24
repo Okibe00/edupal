@@ -1,7 +1,7 @@
 import 'dotenv/config';
 import { Resend } from 'resend';
 import { loginCredentialEmail } from '../template/parentLogin.js';
-
+import { weeklyLearningContentEmail } from '../template/emailParent.js';
 
 export interface SendEmailOptions {
   to: string | string[];
@@ -55,6 +55,36 @@ export class EmailService {
       to: user.email,
       subject: 'Your Login Credentials',
       html: loginCredentialEmail(user),
+    }));
+    const response = await this.mailClient.batch.send(emails);
+    if (response.error) {
+      throw new Error(`Resend Error: ${response.error.message}`);
+    }
+  }
+  async sendBulkParentEmail(
+    parentList: {
+      parentName: string;
+      email: string;
+      parentProfileId: string | undefined;
+      className: string | undefined;
+      lessonDetails: {
+        weekTitle: number;
+        contentTitle: string;
+        teacherName: string;
+      };
+    }[]
+  ): Promise<void> {
+    const emails = parentList.map((parent) => ({
+      from: 'School Portal <noreply@demo.okibe.space>',
+      to: parent.email,
+      subject: 'New Content Alert',
+      html: weeklyLearningContentEmail({
+        parentName: parent.parentName,
+        teacherName: parent.lessonDetails.teacherName,
+        className: parent.className!,
+        weekTitle: parent.lessonDetails.weekTitle,
+        contentTitle: parent.lessonDetails.contentTitle,
+      }),
     }));
     const response = await this.mailClient.batch.send(emails);
     if (response.error) {

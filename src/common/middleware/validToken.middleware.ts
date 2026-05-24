@@ -21,7 +21,6 @@ export async function isValidToken(
 ) {
   try {
     const userId = req.user?.id;
-    console.log(req.user);
     const refreshSession = await prisma.refreshToken.findUnique({
       where: { userId: userId! },
     });

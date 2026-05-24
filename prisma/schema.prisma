@@ -247,6 +247,14 @@ model TeachingAssignment {
 }
 
 // ================= LESSONS & ENGAGEMENT =================
+model emailLog {
+  id        String   @id @default(uuid())
+  subjectId String @unique
+  lessonId  String @unique
+  week      Int
+  createdAt DateTime @default(now())
+  @@unique([subjectId, lessonId, week])
+}
 
 model LessonGuide {
   id                 String         @id @default(uuid())
@@ -338,10 +346,7 @@ model Notification {
   type    String
   title   String
   message String
-  channel String? // e.g., "EMAIL", "PUSH", "SMS"
   isRead  Boolean  @default(false)
-  sentAt  DateTime @default(now())
-
   parentId  String
   parent    ParentProfile @relation(fields: [parentId], references: [id], onDelete: Cascade)
   createdAt DateTime      @default(now())

@@ -2,6 +2,7 @@ import {
   PrismaClient,
   LessonGuide,
   LessonAttachment,
+  DocumentStatus,
 } from '../../../generated/prisma/client.js';
 import emailService, {
   EmailService,
@@ -15,7 +16,7 @@ export class TeacherService {
   constructor(
     private readonly prismaDbClient: PrismaClient,
     userService: UserService,
-    emailService: EmailService
+    private readonly emailService: EmailService
   ) {}
 
   async fetchTeacher(email: string) {
@@ -126,11 +127,65 @@ export class TeacherService {
       },
     });
   }
-
+  private async prepareParentAlertEmail(
+    subjectId: string,
+    lessonDetails: {
+      weekTitle: number;
+      contentTitle: string;
+      teacherName: string;
+    }
+  ) {
+    const result = await this.prismaDbClient.subject.findUnique({
+      where: { id: subjectId },
+      select: {
+        id: true,
+        class: {
+          select: {
+            id: true,
+            name: true,
+            children: {
+              select: {
+                parentLinks: {
+                  select: {
+                    parent: {
+                      select: {
+                        user: {
+                          select: {
+                            email: true,
+                            name: true,
+                            parentProfile: { select: { id: true } },
+                          },
+                        },
+                      },
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+    });
+    const className = result?.class.name;
+    return result?.class.children
+      .map((val) => {
+        return val.parentLinks.map((x) => {
+          return {
+            email: x.parent.user.email,
+            parentName: x.parent.user.name,
+            parentProfileId: x.parent.user.parentProfile?.id,
+            className,
+            lessonDetails,
+          };
+        });
+      })
+      .flat();
+  }
   async createLessonGuide(data: LearningContentType, userId: string) {
     const teacherAssignment = await this.prismaDbClient.user.findUnique({
       where: { id: userId },
       select: {
+        name: true,
         teacherProfile: {
           select: {
             teachingAssignments: {
@@ -147,7 +202,7 @@ export class TeacherService {
         'NONSTD_TEACHER_NOT_ASSIGNED_SUBJECT'
       );
     }
-    return this.prismaDbClient.lessonGuide.upsert({
+    const createdLessonGuide = await this.prismaDbClient.lessonGuide.upsert({
       where: {
         subjectId_week: {
           week: data.week,
@@ -157,6 +212,37 @@ export class TeacherService {
       update: {},
       create: { ...data },
     });
+    //This will be running in a background worker.
+    const emailLog = await this.prismaDbClient.emailLog.findUnique({
+      where: {
+        subjectId_lessonId_week: {
+          subjectId: data.subjectId,
+          week: data.week,
+          lessonId: createdLessonGuide.id,
+        },
+      },
+    });
+    if (data.status === DocumentStatus.PUBLISHED && !emailLog) {
+      await this.prismaDbClient.emailLog.create({
+        data: {
+          subjectId: data.subjectId,
+          week: data.week,
+          lessonId: createdLessonGuide.id,
+        },
+      });
+      const lessonDetailsForParent = {
+        weekTitle: data.week,
+        contentTitle: data.topic,
+        teacherName: teacherAssignment?.name!,
+      };
+      const parentEmailList = await this.prepareParentAlertEmail(
+        data.subjectId,
+        lessonDetailsForParent
+      );
+      await this.emailService.sendBulkParentEmail(parentEmailList!);
+      return createdLessonGuide;
+    }
+    return createdLessonGuide;
   }
   async createLessonAttachment(
     lessonId: string,
