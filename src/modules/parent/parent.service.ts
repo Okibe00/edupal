@@ -53,7 +53,7 @@ export class ParentService {
     });
   }
   async fetchChildLearningActivity(childId: string, schoolId: string) {
-    const schoolState = await this.prismaDbClient.schoolState.findFirst({
+    const schoolState = await this.prismaDbClient.schoolState.findUnique({
       where: { schoolId },
     });
     if (!schoolState) {
@@ -126,7 +126,6 @@ export class ParentService {
         },
       });
       const now = new Date();
-      console.log(userStreakHx);
       if (!userStreakHx) {
         return await this.prismaDbClient.streakHistory.create({
           data: {
@@ -203,7 +202,6 @@ export class ParentService {
         },
       },
     });
-    console.log(parentUser);
     if (!parentUser) {
       throw new AppError(
         'The user(parent) was not found',

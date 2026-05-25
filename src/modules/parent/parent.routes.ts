@@ -1,6 +1,10 @@
 import { Router } from 'express';
 import parentController from './parent.controller.js';
 import { roleGuard } from '../../common/middleware/roleguard.middleware.js';
+import {
+  parentSchoolGuard,
+  schoolGuard,
+} from '../../common/middleware/schoolguard.middleware.js';
 
 const router = Router();
 
@@ -24,7 +28,12 @@ const router = Router();
  *       401:
  *         $ref: '#/components/responses/UnauthorizedResponse'
  */
-router.get('/parent', roleGuard('PARENT'), parentController.fetchParent);
+router.get(
+  '/parent',
+  roleGuard('PARENT'),
+  parentSchoolGuard,
+  parentController.fetchParent
+);
 
 /**
  * @swagger
@@ -58,6 +67,7 @@ router.get('/parent', roleGuard('PARENT'), parentController.fetchParent);
 router.get(
   '/parent/child/lesson-guide',
   roleGuard('PARENT'),
+  parentSchoolGuard,
   parentController.fetchChildLessonGuides
 );
 
