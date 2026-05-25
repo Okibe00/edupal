@@ -28,6 +28,12 @@ const ItemSchema = z.object({
   parent: ParentSchema,
   children: z.array(ChildSchema),
 });
+export const linkChildSchema = parentChildSchema.pick({
+  parent_email: true,
+  child_name: true,
+  child_class: true,
+  admission_number: true,
+});
 export const ParentChildRecord = z.array(parentChildSchema);
 export const ParentRecordSchema = z.array(ItemSchema);
 

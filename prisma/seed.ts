@@ -103,7 +103,7 @@ async function main() {
     // =========================
     const primaryOne = await tx.class.create({
       data: {
-        name: 'Primary',
+        name: 'primary 1',
         yearGroup: 1,
         schoolId: school.id,
       },
@@ -111,7 +111,7 @@ async function main() {
 
     const primaryTwo = await tx.class.create({
       data: {
-        name: 'Primary',
+        name: 'primary 2',
         yearGroup: 2,
         schoolId: school.id,
       },

@@ -21,6 +21,7 @@ import { createSubjectType } from './schema/createSubject.schema.js';
 import { GroupedRecord } from '../../common/utils/groupParent.js';
 import userService from '../user/user.service.js';
 import { SchoolStateSchemaType } from './schema/schoolState.schema.js';
+import { AppError } from '../../common/utils/customError.js';
 
 class AdminService {
   constructor(
@@ -163,7 +164,52 @@ class AdminService {
       });
     return teacherAssignment;
   }
+  async createChild(
+    data: {
+      parent_email: string;
+      child_name: string;
+      child_class: string;
+      admission_number: string;
+    },
+    schoolId: string
+  ) {
+    return await this.prismaDBClient.$transaction(async (tx) => {
+      const childClass = await tx.class.findUniqueOrThrow({
+        where: { name: data.child_class, schoolId: schoolId },
+      });
+      const childParent = await tx.user.findUniqueOrThrow({
+        where: { email: data.parent_email },
+        select: {
+          parentProfile: {
+            select: {
+              id: true,
+            },
+          },
+        },
+      });
+      const child = await tx.child.create({
+        data: {
+          name: data.child_name,
+          admissionNumber: data.admission_number,
+          classId: childClass.id,
+          schoolId,
+        },
+      });
 
+      if (childParent && childParent.parentProfile) {
+        await tx.parentChildLink.create({
+          data: {
+            parentId: childParent.parentProfile.id,
+            childId: child.id,
+          },
+        });
+      } else {
+        throw new Error();
+      }
+
+      return child;
+    });
+  }
   async createParentStudentRecords(data: GroupedRecord[], schoolId: string) {
     const uploadedRecords = await this.prismaDBClient.$transaction(
       async (tx) => {

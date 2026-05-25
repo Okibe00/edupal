@@ -13,6 +13,7 @@ import { logger } from '../../config/logger.js';
 import { parseExcel } from '../../common/utils/parseExcel.js';
 import { groupByParent } from '../../common/utils/groupParent.js';
 import {
+  linkChildSchema,
   ParentChildRecord,
   ParentRecordSchema,
 } from './schema/parentRecord.schema.js';
@@ -124,6 +125,17 @@ export class AdminController {
         req.schoolId!
       );
       return sendSuccess(res, 200, 'Parent registered successfully', result);
+    } catch (error: any) {
+      return next(error);
+    }
+  }
+  async linkChild(req: Request, res: Response, next: NextFunction) {
+    try {
+      const data = req.body;
+      console.log(req.schoolId);
+      const parsedBody = await z.parseAsync(linkChildSchema, data);
+      const result = await adminService.createChild(parsedBody, req.schoolId!);
+      return sendSuccess(res, 200, 'Child registered successfully', result);
     } catch (error: any) {
       return next(error);
     }

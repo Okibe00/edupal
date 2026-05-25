@@ -386,4 +386,54 @@ route.post(
   adminController.schoolState
 );
 
+/**
+ * @swagger
+ * /api/v1/admin/parent/register/child:
+ *   post:
+ *     summary: Create a child record
+ *     description: Creates a child and links the child to a parent using the parent's email address.
+ *     tags:
+ *       - Admin
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - parent_email
+ *               - child_name
+ *               - child_class
+ *               - admission_number
+ *             properties:
+ *               parent_email:
+ *                 type: string
+ *                 format: email
+ *                 example: johndoe@gmail.com
+ *               child_name:
+ *                 type: string
+ *                 example: Jane Doe
+ *               child_class:
+ *                 type: string
+ *                 example: Primary 5
+ *               admission_number:
+ *                 type: string
+ *                 example: ADM-2026-001
+ *     responses:
+ *       201:
+ *         description: Child created successfully
+ *       400:
+ *         description: Invalid request body
+ *       404:
+ *         description: Parent not found
+ *       500:
+ *         description: Internal server error
+ */
+route.post(
+  '/admin/parent/register/child',
+  roleGuard('SCHOOL_ADMIN'),
+  schoolGuard,
+  adminController.linkChild
+);
+
 export default route;
