@@ -249,10 +249,11 @@ model TeachingAssignment {
 // ================= LESSONS & ENGAGEMENT =================
 model emailLog {
   id        String   @id @default(uuid())
-  subjectId String @unique
-  lessonId  String @unique
+  subjectId String   @unique
+  lessonId  String   @unique
   week      Int
   createdAt DateTime @default(now())
+
   @@unique([subjectId, lessonId, week])
 }
 
@@ -342,15 +343,15 @@ model ParentFeedback {
 }
 
 model Notification {
-  id      String   @id @default(uuid())
-  type    String
-  title   String
-  message String
-  isRead  Boolean  @default(false)
+  id        String           @id @default(uuid())
+  type      NotificationType
+  title     String
+  message   String
+  isRead    Boolean          @default(false)
   parentId  String
-  parent    ParentProfile @relation(fields: [parentId], references: [id], onDelete: Cascade)
-  createdAt DateTime      @default(now())
-  updatedAt DateTime      @updatedAt
+  parent    ParentProfile    @relation(fields: [parentId], references: [id], onDelete: Cascade)
+  createdAt DateTime         @default(now())
+  updatedAt DateTime         @updatedAt
 }
 
 model LongestStreak {
@@ -428,4 +429,8 @@ enum UserRole {
   PARENT
   STUDENT
   SCHOOL_ADMIN
+}
+
+enum NotificationType {
+  LESSON_CONTENT_ALERT
 }

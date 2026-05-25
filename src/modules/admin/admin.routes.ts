@@ -2,7 +2,6 @@ import { Router } from 'express';
 import adminController from './admin.controller.js';
 import { validateRequestData } from '../../common/middleware/validationRequestPayload.middleware.js';
 import { createAdminSchema } from './schema/adminSignup.schema.js';
-import { authGuard } from '../../common/middleware/authguard.middleware.js';
 import { roleGuard } from '../../common/middleware/roleguard.middleware.js';
 import { CreateSchoolSchema } from './schema/createSchool.schema.js';
 import { createClassSchema } from './schema/createClass.schema.js';
@@ -73,7 +72,6 @@ route.post(
  */
 route.post(
   '/admin/school',
-  authGuard,
   roleGuard('SCHOOL_ADMIN'),
   validateRequestData(CreateSchoolSchema, 'body'),
   adminController.createSchool
@@ -107,7 +105,6 @@ route.post(
  */
 route.post(
   '/admin/class',
-  authGuard,
   roleGuard('SCHOOL_ADMIN'),
   schoolGuard,
   validateRequestData(createClassSchema, 'body'),
@@ -142,7 +139,6 @@ route.post(
  */
 route.post(
   '/admin/subject',
-  authGuard,
   roleGuard('SCHOOL_ADMIN'),
   schoolGuard,
   validateRequestData(createSubjectSchema, 'body'),
@@ -177,7 +173,6 @@ route.post(
  */
 route.post(
   '/admin/teacher',
-  authGuard,
   roleGuard('SCHOOL_ADMIN'),
   schoolGuard,
   validateRequestData(createTeacherSchema, 'body'),
@@ -212,7 +207,6 @@ route.post(
  */
 route.post(
   '/admin/assign-teacher',
-  authGuard,
   roleGuard('SCHOOL_ADMIN'),
   schoolGuard,
   validateRequestData(teachingAssignmentSchema, 'body'),
@@ -246,7 +240,6 @@ route.post(
  */
 route.post(
   '/admin/upload/parent',
-  authGuard,
   roleGuard('SCHOOL_ADMIN'),
   schoolGuard,
   upload.single('parent'),
@@ -274,7 +267,6 @@ route.post(
  */
 route.post(
   '/admin/parent/register',
-  authGuard,
   roleGuard('SCHOOL_ADMIN'),
   schoolGuard,
   adminController.registerParent
@@ -312,7 +304,6 @@ route.post(
  */
 route.get(
   '/admin/user',
-  authGuard,
   roleGuard('SCHOOL_ADMIN'),
   schoolGuard,
   adminController.fetchAll
@@ -349,7 +340,6 @@ route.get(
  */
 route.delete(
   '/admin/user',
-  authGuard,
   roleGuard('SCHOOL_ADMIN'),
   schoolGuard,
   adminController.delete
@@ -390,7 +380,6 @@ route.delete(
  */
 route.post(
   '/admin/school-state',
-  authGuard,
   roleGuard('SCHOOL_ADMIN'),
   schoolGuard,
   validateRequestData(SchoolStateSchema, 'body'),

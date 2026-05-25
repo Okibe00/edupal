@@ -1,5 +1,4 @@
 import { Router } from 'express';
-import { authGuard } from '../../common/middleware/authguard.middleware.js';
 import parentController from './parent.controller.js';
 import { roleGuard } from '../../common/middleware/roleguard.middleware.js';
 
@@ -25,12 +24,7 @@ const router = Router();
  *       401:
  *         $ref: '#/components/responses/UnauthorizedResponse'
  */
-router.get(
-  '/parent',
-  // authGuard,
-  roleGuard('PARENT'),
-  parentController.fetchParent
-);
+router.get('/parent', roleGuard('PARENT'), parentController.fetchParent);
 
 /**
  * @swagger
@@ -63,7 +57,6 @@ router.get(
  */
 router.get(
   '/parent/child/lesson-guide',
-  // authGuard,
   roleGuard('PARENT'),
   parentController.fetchChildLessonGuides
 );
@@ -88,7 +81,6 @@ router.get(
  */
 router.get(
   '/parent/streak',
-  // authGuard,
   roleGuard('PARENT'),
   parentController.streakManagement
 );
@@ -122,7 +114,6 @@ router.get(
  */
 router.get(
   '/parent/point-management',
-  // authGuard,
   roleGuard('PARENT'),
   parentController.pointManagement
 );

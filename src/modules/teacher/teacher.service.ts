@@ -9,6 +9,7 @@ import emailService, {
 } from '../../common/service/email.service.js';
 import { AppError } from '../../common/utils/customError.js';
 import { prisma } from '../../config/database.js';
+import notificationService from '../notification/notification.service.js';
 import userService, { UserService } from '../user/user.service.js';
 import { LearningContentType } from './schema/learningContent.schema.js';
 
@@ -239,6 +240,7 @@ export class TeacherService {
         data.subjectId,
         lessonDetailsForParent
       );
+      await notificationService.createNewContentNotification(parentEmailList!)
       await this.emailService.sendBulkParentEmail(parentEmailList!);
       return createdLessonGuide;
     }

@@ -7,6 +7,7 @@ import authRoute from './modules/auth/auth.routes.js';
 import adminRoute from './modules/admin/admin.routes.js';
 import teacherRoute from './modules/teacher/teacher.routes.js';
 import parentRoute from './modules/parent/parent.routes.js';
+import notificationRoute from './modules/notification/notifications.routes.js';
 import helmet from 'helmet';
 import {
   isValidToken,
@@ -48,6 +49,7 @@ app.use('/api/v1', authRoute);
 app.use('/api/v1', adminRoute);
 app.use('/api/v1', teacherRoute);
 app.use('/api/v1', parentRoute);
+app.use('/api/v1', notificationRoute);
 
 /**
  * CATCH ALL ROUTES
