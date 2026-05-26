@@ -210,7 +210,7 @@ export class TeacherService {
           subjectId: data.subjectId,
         },
       },
-      update: {},
+      update: { ...data },
       create: { ...data },
     });
     //This will be running in a background worker.
@@ -240,7 +240,7 @@ export class TeacherService {
         data.subjectId,
         lessonDetailsForParent
       );
-      await notificationService.createNewContentNotification(parentEmailList!)
+      await notificationService.createNewContentNotification(parentEmailList!);
       await this.emailService.sendBulkParentEmail(parentEmailList!);
       return createdLessonGuide;
     }
