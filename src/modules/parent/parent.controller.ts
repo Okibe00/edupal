@@ -60,6 +60,14 @@ export class ParentController {
       return next(error);
     }
   }
+  async fetchLearningContent(req: Request, res: Response, next: NextFunction) {
+    try {
+      const query = req.query;
+      return res.download(query['url'] as string);
+    } catch (error: any) {
+      return next(error);
+    }
+  }
 }
 
 export default new ParentController();

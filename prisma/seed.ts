@@ -1,7 +1,4 @@
-import {
-  UserRole,
-  DocumentStatus,
-} from '../generated/prisma/client.js';
+import { UserRole, DocumentStatus } from '../generated/prisma/client.js';
 import { prisma } from '../src/config/database.js';
 import bcrypt from 'bcrypt';
 

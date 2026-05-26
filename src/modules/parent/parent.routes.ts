@@ -127,4 +127,36 @@ router.get(
   roleGuard('PARENT'),
   parentController.pointManagement
 );
+
+/**
+ * @swagger
+ * /api/v1/parent/learning-content:
+ *   get:
+ *     summary: Fetch uploaded learning content
+ *     description: Fetch learning content stored on the host disk.
+ *     tags:
+ *       - Parent
+ *     parameters:
+ *       - in: query
+ *         name: url
+ *         required: true
+ *         description: Location of the file on disk.
+ *         schema:
+ *           type: string
+ *           example: /upload/noun.pdf
+ *     responses:
+ *       200:
+ *         description: Learning content fetched successfully
+ *       400:
+ *         description: Invalid request
+ *       404:
+ *         description: File not found
+ *       500:
+ *         description: Internal server error
+ */
+router.get(
+  '/parent/learning-content',
+  roleGuard('PARENT'),
+  parentController.fetchLearningContent
+);
 export default router;
